@@ -1,0 +1,26 @@
+--- src/Makefile.system-zlib	2008-02-15 11:16:23.000000000 +0100
++++ src/Makefile	2008-02-15 11:28:12.000000000 +0100
+@@ -82,6 +82,7 @@
+ ifeq ($(enable_gzip),true)
+   objects += adler32 compress crc32 deflate gzio inffast inflate inftrees ioapi trees unzip zip zutil
+   flags += $(call mkdef,GZIP_SUPPORT)
++  link += $(shell pkg-config --libs minizip)
+ endif
+ 
+ ifeq ($(enable_jma),true)
+--- src/reader/zipreader.h.system-zlib	2008-10-17 12:14:16.000000000 +0200
++++ src/reader/zipreader.h	2008-11-29 21:36:02.000000000 +0100
+@@ -1,4 +1,4 @@
+-#include "zlib/unzip.h"
++#include <minizip/unzip.h>
+ 
+ #define ZIP_MAX_FILE_NAME PATH_MAX
+ 
+--- src/reader/gzreader.h.system-zlib	2005-12-18 10:20:14.000000000 +0100
++++ src/reader/gzreader.h	2008-02-15 11:25:45.000000000 +0100
+@@ -1,4 +1,4 @@
+-#include "zlib/zlib.h"
++#include <zlib.h>
+ 
+ class GZReader : public Reader {
+ private:
