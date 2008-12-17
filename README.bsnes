@@ -3,45 +3,24 @@ RPM Fusion bsnes package
 
 1. Problems with PulseAudio
 
-bsnes does not work very well with PulseAudio, which is enabled in Fedora by
-default. With one exception, trying to use it will result in 100 % CPU usage
-and necessity to kill the program. The emulator has four audio drivers:
-ALSA, libao, OpenAL and OSS. It is possible to make bsnes work using the
-following workarounds:
+Some bsnes audio drivers do not work very well with PulseAudio, which is enabled in Fedora by default. Trying to use these will result in 100 % CPU usage and necessity to kill the program. The emulator has five audio drivers: ALSA, libao, OpenAL and OSS. The way they work with PA is described below:
 
-- ALSA: will not work with default Fedora config, you need to remove
-  alsa-plugins-pulseaudio or disable the said plugin
+- ALSA: will not work with default Fedora config, you need to remove alsa-plugins-pulseaudio or disable the said plugin
 - OpenAL: works with default Fedora config
-- libao: will not work with default Fedora config, you need to change the libao
-  driver to something different than pulse (but if you change it to alsa, you
-  will need to disable the alsa pulse plugin as well)
 - OSS: works with default Fedora config, will not work with padsp
+- PulseAudio: works with default Fedora config
+- libao: will not work with default Fedora config, you need to change the libao driver to something different than pulse (but if you change it to alsa, you will need to disable the alsa pulse plugin as well)
 
-bsnes audio drivers can be changed by going to Settings -> Configuration ->
-Drivers. Program needs to be restarted for the changes to have effect.
+bsnes audio drivers can be changed by going to Settings -> Configuration -> Drivers. Program needs to be restarted for the changes to have effect.
 
 
 2. Using system zlib
 
-This is the post byuu made on zsnes boards when asked to merge the system-zlib
-patch (it was more complex at that stage, using system libs was optional, but
-since it was not going to be merged anyway, I decided to make it simpler):
+This is the post byuu made on zsnes boards when asked to merge the system-zlib patch (it was more complex at that stage, using system libs was optional, but since it was not going to be merged anyway, I decided to make it simpler):
 
 
-I don't really want to add this change to bsnes, no. A system-wide zlib would
-require a DLL for Windows, and I see no reason to provide a lean, stripped
-down zlib along with bsnes for Windows users, yet have an option to use the
-system version for Linux (especially when there is no similar lib for JMA),
-just to appease a few people with nothing better to do than complain about
-random garbage.
+I don't really want to add this change to bsnes, no. A system-wide zlib would require a DLL for Windows, and I see no reason to provide a lean, stripped down zlib along with bsnes for Windows users, yet have an option to use the system version for Linux (especially when there is no similar lib for JMA), just to appease a few people with nothing better to do than complain about random garbage.
 
-However, feel free to appease the Fedora development team by changing that in
-your source tree if you like. My sincere apologies that you'll have to keep
-backporting the change.
+However, feel free to appease the Fedora development team by changing that in your source tree if you like. My sincere apologies that you'll have to keep backporting the change.
 
-I don't want any part in trying to appease these people. They constantly bring
-up crap about non-commercial clauses, about using a 64-byte IPLROM, about
-compiling in support for OSS by default, and now about a massive ~80kb that
-can be shaved off the bsnes binary by adding extra dependencies to the
-emulator. Perhaps I should just start offering a raw Linux binary on my
-website ala nVidia, Macromedia et al.
+I don't want any part in trying to appease these people. They constantly bring up crap about non-commercial clauses, about using a 64-byte IPLROM, about compiling in support for OSS by default, and now about a massive ~80kb that can be shaved off the bsnes binary by adding extra dependencies to the emulator. Perhaps I should just start offering a raw Linux binary on my website ala nVidia, Macromedia et al.

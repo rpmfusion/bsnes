@@ -25,8 +25,8 @@ BuildRequires:  libao-devel
 BuildRequires:  libXv-devel
 BuildRequires:  libXtst-devel
 BuildRequires:  minizip-devel
+BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  SDL-devel
-BuildRequires:  yasm
 
 #libco, which is used by bsnes, only supports these
 ExclusiveArch:  i386 x86_64
@@ -86,6 +86,8 @@ rm -rf $RPM_BUILD_ROOT
 - Updated to 0.038
 - Updated system zlib patch (.h → .hpp)
 - License and readme are now accessible through the executable
+- Added pulseaudio-libs-devel to BuildRequires, dropped yasm
+- Updated README.Fedora (PulseAudio driver)
 
 * Fri Dec  5 2008 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.037a-5
 - Explained why system snes_ntsc is not used
