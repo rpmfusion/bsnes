@@ -8,16 +8,16 @@
  endif
  
  ifeq ($(enable_jma),true)
---- src/reader/zipreader.h.system-zlib	2008-10-17 12:14:16.000000000 +0200
-+++ src/reader/zipreader.h	2008-11-29 21:36:02.000000000 +0100
+--- src/reader/zipreader.hpp.system-zlib	2008-10-17 12:14:16.000000000 +0200
++++ src/reader/zipreader.hpp	2008-11-29 21:36:02.000000000 +0100
 @@ -1,4 +1,4 @@
 -#include "zlib/unzip.h"
 +#include <minizip/unzip.h>
  
  #define ZIP_MAX_FILE_NAME PATH_MAX
  
---- src/reader/gzreader.h.system-zlib	2005-12-18 10:20:14.000000000 +0100
-+++ src/reader/gzreader.h	2008-02-15 11:25:45.000000000 +0100
+--- src/reader/gzreader.hpp.system-zlib	2005-12-18 10:20:14.000000000 +0100
++++ src/reader/gzreader.hpp	2008-02-15 11:25:45.000000000 +0100
 @@ -1,4 +1,4 @@
 -#include "zlib/zlib.h"
 +#include <zlib.h>

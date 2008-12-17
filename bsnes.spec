@@ -1,8 +1,8 @@
-%define vernumber 037a
+%define vernumber 038
 
 Name:           bsnes
 Version:        0.%{vernumber}
-Release:        5%{?dist}
+Release:        1%{?dist}
 Summary:        SNES emulator focused on accuracy
 
 Group:          Applications/Emulators
@@ -46,8 +46,6 @@ minimum system requirements for bsnes are quite high.
 %patch1 -p0 -b .system-zlib
 
 #fix permissions and line endings
-chmod 644 license.txt readme.txt
-sed -i 's/\r//' license.txt readme.txt
 find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c \) -exec chmod 644 {} \;
 find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c \) -exec sed -i 's/\r//' {} \;
 
@@ -77,13 +75,18 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc license.txt readme.txt README.Fedora
+%doc README.Fedora
 %{_bindir}/bsnes
 %{_datadir}/icons/bsnes.png
 %{_datadir}/applications/rpmfusion-bsnes.desktop
 
 
 %changelog
+* Wed Dec 17 2008 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.038-1
+- Updated to 0.038
+- Updated system zlib patch (.h → .hpp)
+- License and readme are now accessible through the executable
+
 * Fri Dec  5 2008 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.037a-5
 - Explained why system snes_ntsc is not used
 - Explained why ExclusiveArch is used
