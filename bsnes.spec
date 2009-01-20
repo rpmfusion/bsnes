@@ -1,4 +1,4 @@
-%define vernumber 038
+%define vernumber 039
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -82,6 +82,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Jan 20 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.039-1
+- Updated to 0.039
+
 * Wed Dec 17 2008 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.038-1
 - Updated to 0.038
 - Updated system zlib patch (.h → .hpp)
