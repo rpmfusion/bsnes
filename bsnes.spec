@@ -2,7 +2,7 @@
 
 Name:           bsnes
 Version:        0.%{vernumber}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        SNES emulator focused on accuracy
 
 Group:          Applications/Emulators
@@ -28,9 +28,6 @@ BuildRequires:  minizip-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  SDL-devel
 
-#libco, which is used by bsnes, only supports these
-ExclusiveArch:  i386 x86_64
-
 %description
 bsnes is an emulator that began development on 2004-10-14. The purpose of the
 emulator is a bit different from other emulators: it focuses on accuracy,
@@ -50,7 +47,7 @@ find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c 
 find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c \) -exec sed -i 's/\r//' {} \;
 
 #use system optflags
-sed -i "s#flags = -O3#flags = %{optflags}#" src/Makefile
+sed -i "s#flags = -O3#flags = $RPM_OPT_FLAGS#" src/Makefile
 
 #install fedora-specific readme
 install -pm 644 %{SOURCE2} README.Fedora
@@ -82,6 +79,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Feb 22 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.039-2
+- Drop the ExcludeArch, libco has a C fallback
+- Use macros consistently
+
 * Tue Jan 20 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.039-1
 - Updated to 0.039
 
