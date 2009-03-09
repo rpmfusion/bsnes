@@ -1,4 +1,4 @@
-%define vernumber 039
+%define vernumber 040
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -9,7 +9,6 @@ Group:          Applications/Emulators
 License:        Redistributable, no modification permitted
 URL:            http://byuu.cinnamonpirate.com/?page=bsnes
 Source0:        http://byuu.cinnamonpirate.com/files/%{name}_v%{vernumber}.tar.bz2
-Source1:        bsnes.desktop
 Source2:        README.bsnes
 Patch0:         bsnes-0.037a-strip.patch
 Patch1:         bsnes-system-zlib.patch
@@ -20,16 +19,18 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 #isn't available when the library is built stand alone
 BuildRequires:  desktop-file-utils
 BuildRequires:  freealut-devel
-BuildRequires:  gtk2-devel
 BuildRequires:  libao-devel     
 BuildRequires:  libXv-devel
 BuildRequires:  libXtst-devel
 BuildRequires:  minizip-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  SDL-devel
-
-#libco, which is used by bsnes, only supports these
-ExclusiveArch:  i386 x86_64
+#Qt >= 4.5 is required for legal reasons
+%if 0%{?fedora} >= 11
+BuildRequires:  qt-devel >= 1:4.5.0-1%{?dist}
+%else
+BuildRequires:  gtk2-devel
+%endif
 
 %description
 bsnes is an emulator that began development on 2004-10-14. The purpose of the
@@ -50,7 +51,7 @@ find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c 
 find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c \) -exec sed -i 's/\r//' {} \;
 
 #use system optflags
-sed -i "s#flags = -O3#flags = %{optflags}#" src/Makefile
+sed -i "s#flags = -O3#flags = $RPM_OPT_FLAGS#" src/Makefile
 
 #install fedora-specific readme
 install -pm 644 %{SOURCE2} README.Fedora
@@ -58,7 +59,13 @@ install -pm 644 %{SOURCE2} README.Fedora
 
 %build
 pushd src
-make %{?_smp_mflags} platform=x compiler=gcc enable_gzip=true enable_jma=true
+%if 0%{?fedora} >= 11
+make %{?_smp_mflags} platform=x compiler=gcc enable_gzip=true enable_jma=true \
+        moc=moc-qt4
+%else
+make %{?_smp_mflags} platform=x compiler=gcc enable_gzip=true enable_jma=true \
+        ui=ui_hiro
+%endif
 
 
 %install
@@ -66,7 +73,8 @@ rm -rf $RPM_BUILD_ROOT
 pushd src
 make install DESTDIR=$RPM_BUILD_ROOT prefix=%{_prefix}      
 desktop-file-install --vendor=rpmfusion \
-       --dir $RPM_BUILD_ROOT%{_datadir}/applications %{SOURCE1}
+        --delete-original --dir $RPM_BUILD_ROOT%{_datadir}/applications \
+        $RPM_BUILD_ROOT%{_datadir}/applications/bsnes.desktop
 
 
 %clean
@@ -77,11 +85,23 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc README.Fedora
 %{_bindir}/bsnes
-%{_datadir}/icons/bsnes.png
+%{_datadir}/pixmaps/bsnes.png
 %{_datadir}/applications/rpmfusion-bsnes.desktop
 
 
 %changelog
+* Mon Mar 09 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.040-1
+- Updated to 0.040
+- The desktop file now comes with the tarball
+- Icon is now installed to %%{_datadir}/pixmaps
+- The Qt ui is only built when it is legal to do so
+- Updated the strip patch
+- Fixed the last %%changelog entry
+
+* Sun Feb 22 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.039-2
+- Dropped the ExclusiveArch, libco has a C fallback
+- Use macros consistently
+
 * Tue Jan 20 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.039-1
 - Updated to 0.039
 
