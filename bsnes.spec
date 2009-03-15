@@ -1,4 +1,4 @@
-%define vernumber 040
+%define vernumber 041
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -48,7 +48,10 @@ minimum system requirements for bsnes are quite high.
 
 #fix permissions and line endings
 find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c \) -exec chmod 644 {} \;
+chmod 644 src/data/*.html
 find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c \) -exec sed -i 's/\r//' {} \;
+
+
 
 #use system optflags
 sed -i "s#flags = -O3#flags = $RPM_OPT_FLAGS#" src/Makefile
@@ -83,13 +86,17 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc README.Fedora
+%doc README.Fedora src/data/*.html
 %{_bindir}/bsnes
 %{_datadir}/pixmaps/bsnes.png
 %{_datadir}/applications/rpmfusion-bsnes.desktop
 
 
 %changelog
+* Sun Mar 15 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.041-1
+- Updated to 0.041
+- Re-added documentation
+
 * Mon Mar 09 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.040-1
 - Updated to 0.040
 - The desktop file now comes with the tarball
