@@ -2,7 +2,7 @@
 
 Name:           bsnes
 Version:        0.%{vernumber}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        SNES emulator focused on accuracy
 
 Group:          Applications/Emulators
@@ -93,6 +93,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Mar 29 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 0.041-2
+- rebuild for new F11 features
+
 * Sun Mar 15 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.041-1
 - Updated to 0.041
 - Re-added documentation
