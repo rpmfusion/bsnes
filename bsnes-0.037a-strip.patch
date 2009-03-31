@@ -1,10 +1,10 @@
---- src/Makefile.strip	2009-02-22 10:13:58.000000000 +0100
-+++ src/Makefile	2009-02-22 12:18:50.000000000 +0100
-@@ -13,7 +13,6 @@
+--- src/Makefile.strip	2009-03-29 08:14:20.000000000 +0200
++++ src/Makefile	2009-03-29 12:19:56.000000000 +0200
+@@ -14,7 +14,6 @@
    cpp = $(subst cc,++,$(compiler))
    obj = o
    rule = -c $< -o $@
 -  link = -s
    mkbin = -o$1
    mkdef = -D$1
-   mkinc = -I$1
+   mkincpath = -I$1

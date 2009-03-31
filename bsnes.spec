@@ -1,14 +1,16 @@
-%define vernumber 041
+%define vernumber 042
 
 Name:           bsnes
 Version:        0.%{vernumber}
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        SNES emulator focused on accuracy
 
 Group:          Applications/Emulators
 License:        Redistributable, no modification permitted
-URL:            http://byuu.cinnamonpirate.com/?page=bsnes
-Source0:        http://byuu.cinnamonpirate.com/files/%{name}_v%{vernumber}.tar.bz2
+URL:            http://byuu.org/bsnes/
+#Get the source here:
+#http://byuu.org/download.php?file=%{name}_v%{vernumber}.tar.bz2
+Source0:        %{name}_v%{vernumber}.tar.bz2
 Source2:        README.bsnes
 Patch0:         bsnes-0.037a-strip.patch
 Patch1:         bsnes-system-zlib.patch
@@ -26,11 +28,7 @@ BuildRequires:  minizip-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  SDL-devel
 #Qt >= 4.5 is required for legal reasons
-%if 0%{?fedora} >= 11
-BuildRequires:  qt-devel >= 1:4.5.0-1%{?dist}
-%else
-BuildRequires:  gtk2-devel
-%endif
+BuildRequires:  qt-devel >= 1:4.5.0-1
 
 %description
 bsnes is an emulator that began development on 2004-10-14. The purpose of the
@@ -62,13 +60,8 @@ install -pm 644 %{SOURCE2} README.Fedora
 
 %build
 pushd src
-%if 0%{?fedora} >= 11
 make %{?_smp_mflags} platform=x compiler=gcc enable_gzip=true enable_jma=true \
         moc=moc-qt4
-%else
-make %{?_smp_mflags} platform=x compiler=gcc enable_gzip=true enable_jma=true \
-        ui=ui_hiro
-%endif
 
 
 %install
@@ -93,6 +86,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Mar 31 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.042-1
+- Updated to 0.042
+- Use Qt build on all branches, hiro ui is no more
+- Updated the strip patch
+- Updated the URL and Source0 addresses
+
 * Sun Mar 29 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 0.041-2
 - rebuild for new F11 features
 
