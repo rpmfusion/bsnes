@@ -1,4 +1,4 @@
-%define vernumber 042
+%define vernumber 045
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -86,6 +86,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Apr 20 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.045-1
+- Updated to 0.045
+
 * Tue Mar 31 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.042-1
 - Updated to 0.042
 - Use Qt build on all branches, hiro ui is no more
