@@ -56,6 +56,8 @@ sed -i "s#flags := -O3#flags := $RPM_OPT_FLAGS#" src/Makefile
 #install fedora-specific readme
 install -pm 644 %{SOURCE2} README.Fedora
 
+#disable profiling, it breaks i386 build
+sed -i "s/flags += -fprofile-use/# flags += -fprofile-use/" src/Makefile
 
 %build
 pushd src
@@ -91,6 +93,7 @@ rm -rf $RPM_BUILD_ROOT
 - Updated the strip patch again
 - Updated the zlib patch again
 - Updated the optflags fix
+- Disabled profiling
 
 * Mon Apr 20 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.045-1
 - Updated to 0.045
