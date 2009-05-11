@@ -1,4 +1,4 @@
-%define vernumber 045
+%define vernumber 046
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -23,7 +23,6 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  freealut-devel
 BuildRequires:  libao-devel     
 BuildRequires:  libXv-devel
-BuildRequires:  libXtst-devel
 BuildRequires:  minizip-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  SDL-devel
@@ -52,7 +51,7 @@ find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c 
 
 
 #use system optflags
-sed -i "s#flags = -O3#flags = $RPM_OPT_FLAGS#" src/Makefile
+sed -i "s#flags := -O3#flags := $RPM_OPT_FLAGS#" src/Makefile
 
 #install fedora-specific readme
 install -pm 644 %{SOURCE2} README.Fedora
@@ -86,6 +85,13 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun May 10 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.046-1
+- Updated to 0.046
+- Dropped libXtst-devel BuildRequires
+- Updated the strip patch again
+- Updated the zlib patch again
+- Updated the optflags fix
+
 * Mon Apr 20 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.045-1
 - Updated to 0.045
 
