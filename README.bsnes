@@ -13,7 +13,6 @@ Some bsnes audio drivers do not work very well with PulseAudio, which is enabled
 
 bsnes audio drivers can be changed by going to Settings -> Configuration -> Drivers. Program needs to be restarted for the changes to have effect.
 
-
 2. Using system zlib
 
 This is the post byuu made on zsnes boards when asked to merge the system-zlib patch (it was more complex at that stage, using system libs was optional, but since it was not going to be merged anyway, I decided to make it simpler):
