@@ -1,4 +1,4 @@
-%define vernumber 046
+%define vernumber 047
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -43,12 +43,9 @@ minimum system requirements for bsnes are quite high.
 %patch0 -p0 -b .strip
 %patch1 -p0 -b .system-zlib
 
-#fix permissions and line endings
+#fix permissions
 find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c \) -exec chmod 644 {} \;
 chmod 644 src/data/*.html
-find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c \) -exec sed -i 's/\r//' {} \;
-
-
 
 #use system optflags
 sed -i "s#flags := -O3#flags := $RPM_OPT_FLAGS#" src/Makefile
@@ -56,8 +53,6 @@ sed -i "s#flags := -O3#flags := $RPM_OPT_FLAGS#" src/Makefile
 #install fedora-specific readme
 install -pm 644 %{SOURCE2} README.Fedora
 
-#disable profiling, it breaks i386 build
-sed -i "s/flags += -fprofile-use/# flags += -fprofile-use/" src/Makefile
 
 %build
 pushd src
@@ -87,6 +82,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Jun 07 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.047-1
+- Updated to 0.047
+- Updated the strip patch
+- Dropped the line endings fix and updated the patches accordingly
+- Dropped the no longer required profiler fix
+
 * Sun May 10 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.046-1
 - Updated to 0.046
 - Dropped libXtst-devel BuildRequires
