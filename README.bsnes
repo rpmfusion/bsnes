@@ -25,4 +25,3 @@ However, feel free to appease the Fedora development team by changing that in yo
 
 I don't want any part in trying to appease these people. They constantly bring up crap about non-commercial clauses, about using a 64-byte IPLROM, about compiling in support for OSS by default, and now about a massive ~80kb that can be shaved off the bsnes binary by adding extra dependencies to the emulator. Perhaps I should just start offering a raw Linux binary on my website ala nVidia, Macromedia et al.
 
-test
