@@ -3,15 +3,7 @@ RPM Fusion bsnes package
 
 1. Problems with PulseAudio
 
-Some bsnes audio drivers do not work very well with PulseAudio, which is enabled in Fedora by default. Trying to use these will result in 100 % CPU usage and necessity to kill the program. The emulator has five audio drivers: ALSA, libao, OpenAL and OSS. The way they work with PA is described below:
-
-- ALSA: will not work with default Fedora config, you need to remove alsa-plugins-pulseaudio or disable the said plugin
-- OpenAL: works with default Fedora config
-- OSS: works with default Fedora config, will not work with padsp
-- PulseAudio: works with default Fedora config
-- libao: will not work with default Fedora config, you need to change the libao driver to something different than pulse (but if you change it to alsa, you will need to disable the alsa pulse plugin as well)
-
-bsnes audio drivers can be changed by going to Settings -> Configuration -> Drivers. Program needs to be restarted for the changes to have effect.
+There are slight problems with some of the bsnes audio drivers and PulseAudio. Namely, the libao driver will not work, and the OSS driver will not work with padsp. Other drivers work with the default Fedora configuration. Please note that the emulator author recommends using the ALSA driver over the native PulseAudio one due to limitations in the latter. bsnes audio drivers can be changed by going to Settings -> Configuration -> Advanced. Program needs to be restarted for the changes to have effect.
 
 
 2. Using system zlib
