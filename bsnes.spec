@@ -1,4 +1,4 @@
-%define vernumber 048
+%define vernumber 049
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -82,6 +82,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Aug 24 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.049-1
+- Updated to 0.049
+
 * Tue Jul 14 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.048-1
 - Updated to 0.048
 - Updated the Fedora readme
