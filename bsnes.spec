@@ -1,4 +1,4 @@
-%define vernumber 049
+%define vernumber 050
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -82,6 +82,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Aug 29 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.050-1
+- Updated to 0.050
+
 * Mon Aug 24 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.049-1
 - Updated to 0.049
 
