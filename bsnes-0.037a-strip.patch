@@ -1,5 +1,5 @@
---- src/Makefile.strip	2009-06-07 03:56:29.000000000 +0200
-+++ src/Makefile	2009-06-07 19:38:45.000000000 +0200
+--- src/Makefile.strip	2009-09-27 03:40:16.000000000 +0200
++++ src/Makefile	2009-09-27 19:39:32.000000000 +0200
 @@ -23,7 +23,7 @@
  ################
  
@@ -7,5 +7,5 @@
 -  link += -s
 +# link += -s
  
-   ruby := video.glx video.xv video.sdl video.qtimage
+   ruby := video.glx video.xv video.qtraster video.sdl
    ruby += audio.alsa audio.openal audio.oss audio.pulseaudio audio.ao
