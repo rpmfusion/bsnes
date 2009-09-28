@@ -1,4 +1,4 @@
-%define vernumber 050
+%define vernumber 051
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -6,14 +6,13 @@ Release:        1%{?dist}
 Summary:        SNES emulator focused on accuracy
 
 Group:          Applications/Emulators
-License:        Redistributable, no modification permitted
+License:        GPLv2
 URL:            http://byuu.org/bsnes/
 #Get the source here:
 #http://byuu.org/download.php?file=%{name}_v%{vernumber}.tar.bz2
 Source0:        %{name}_v%{vernumber}.tar.bz2
 Source2:        README.bsnes
 Patch0:         bsnes-0.037a-strip.patch
-Patch1:         bsnes-system-zlib.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #bsnes does not use system snes_ntsc because the modified video processing
@@ -41,14 +40,13 @@ minimum system requirements for bsnes are quite high.
 %prep
 %setup -qc
 %patch0 -p0 -b .strip
-%patch1 -p0 -b .system-zlib
 
 #fix permissions
 find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c \) -exec chmod 644 {} \;
 chmod 644 src/data/*.html
 
 #use system optflags
-sed -i "s#flags := -O3#flags := $RPM_OPT_FLAGS#" src/Makefile
+sed -i "s#-O3#$RPM_OPT_FLAGS#" src/Makefile
 
 #install fedora-specific readme
 install -pm 644 %{SOURCE2} README.Fedora
@@ -82,6 +80,13 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Sep 27 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.051-1
+- Updated to 0.051
+- Updated the strip patch
+- Updated the license tag
+- Dropped the system zlib patch, not needed anymore
+- Updated the sed optflags line to catch all -O3 occurrences
+
 * Sun Aug 29 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.050-1
 - Updated to 0.050
 
