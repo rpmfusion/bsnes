@@ -1,4 +1,4 @@
-%define vernumber 051
+%global vernumber 052
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -22,11 +22,9 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  freealut-devel
 BuildRequires:  libao-devel     
 BuildRequires:  libXv-devel
-BuildRequires:  minizip-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  SDL-devel
-#Qt >= 4.5 is required for legal reasons
-BuildRequires:  qt-devel >= 1:4.5.0-1
+BuildRequires:  qt-devel
 
 %description
 bsnes is an emulator that began development on 2004-10-14. The purpose of the
@@ -54,8 +52,7 @@ install -pm 644 %{SOURCE2} README.Fedora
 
 %build
 pushd src
-make %{?_smp_mflags} platform=x compiler=gcc enable_gzip=true enable_jma=true \
-        moc=moc-qt4
+make %{?_smp_mflags} platform=x compiler=gcc moc=moc-qt4
 
 
 %install
@@ -80,6 +77,13 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Sep 29 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.052-1
+- Updated to 0.052
+- Given that bsnes is GPL now, the Qt requirement can be unversioned
+- Cleaned up the make line
+- Use %%global instead of %%define
+- Dropped minizip-devel from BuildRequires
+
 * Sun Sep 27 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.051-1
 - Updated to 0.051
 - Updated the strip patch
