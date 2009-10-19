@@ -1,4 +1,4 @@
-%global vernumber 052
+%global vernumber 053
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -77,6 +77,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Oct 19 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.053-1
+- Updated to 0.053
+
 * Tue Sep 29 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.052-1
 - Updated to 0.052
 - Given that bsnes is GPL now, the Qt requirement can be unversioned
