@@ -1,4 +1,4 @@
-%global vernumber 053
+%global vernumber 054
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -13,6 +13,7 @@ URL:            http://byuu.org/bsnes/
 Source0:        %{name}_v%{vernumber}.tar.bz2
 Source2:        README.bsnes
 Patch0:         bsnes-0.037a-strip.patch
+Patch1:         bsnes-0.054-noppcelf.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #bsnes does not use system snes_ntsc because the modified video processing
@@ -38,6 +39,7 @@ minimum system requirements for bsnes are quite high.
 %prep
 %setup -qc
 %patch0 -p0 -b .strip
+%patch1 -p1 -b .noppcelf
 
 #fix permissions
 find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c \) -exec chmod 644 {} \;
@@ -77,6 +79,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Oct 21 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.054-1
+- Updated to 0.054
+- Disabled ppc-elf.c until we figure out why it does not build
+
 * Mon Oct 19 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.053-1
 - Updated to 0.053
 
