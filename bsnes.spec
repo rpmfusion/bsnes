@@ -2,7 +2,7 @@
 
 Name:           bsnes
 Version:        0.%{vernumber}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        SNES emulator focused on accuracy
 
 Group:          Applications/Emulators
@@ -13,7 +13,7 @@ URL:            http://byuu.org/bsnes/
 Source0:        %{name}_v%{vernumber}.tar.bz2
 Source2:        README.bsnes
 Patch0:         bsnes-0.037a-strip.patch
-Patch1:         bsnes-0.054-noppcelf.patch
+Patch1:         libco.ppc-elf-2.diff
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #bsnes does not use system snes_ntsc because the modified video processing
@@ -39,7 +39,9 @@ minimum system requirements for bsnes are quite high.
 %prep
 %setup -qc
 %patch0 -p0 -b .strip
+pushd src/lib/libco
 %patch1 -p1 -b .noppcelf
+popd
 
 #fix permissions
 find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c \) -exec chmod 644 {} \;
@@ -79,6 +81,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Oct 28 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.054-2
+- Fixed the ppc-elf issue properly
+
 * Wed Oct 21 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.054-1
 - Updated to 0.054
 - Disabled ppc-elf.c until we figure out why it does not build
