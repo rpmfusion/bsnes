@@ -1,0 +1,12 @@
+diff -up bsnes-0.054/src/lib/libco/libco.c.noppcelfppc64 bsnes-0.054/src/lib/libco/libco.c
+--- bsnes-0.054/src/lib/libco/libco.c.noppcelfppc64	2009-10-18 09:26:09.000000000 +0200
++++ bsnes-0.054/src/lib/libco/libco.c	2009-10-28 20:17:02.000000000 +0100
+@@ -8,7 +8,7 @@
+   #include "x86.c"
+ #elif defined(__GNUC__) && defined(__amd64__)
+   #include "amd64.c"
+-#elif defined(__GNUC__) && defined(__powerpc__) && defined(__ELF__)
++#elif defined(__GNUC__) && defined(__PPC32__) && defined(__ELF__)
+   #include "ppc-elf.c"
+ #elif defined(__GNUC__)
+   #include "sjlj.c"
