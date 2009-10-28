@@ -14,6 +14,7 @@ Source0:        %{name}_v%{vernumber}.tar.bz2
 Source2:        README.bsnes
 Patch0:         bsnes-0.037a-strip.patch
 Patch1:         libco.ppc-elf-2.diff
+Patch2:         bsnes-0.054-noppcelfppc64.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #bsnes does not use system snes_ntsc because the modified video processing
@@ -40,8 +41,9 @@ minimum system requirements for bsnes are quite high.
 %setup -qc
 %patch0 -p0 -b .strip
 pushd src/lib/libco
-%patch1 -p1 -b .noppcelf
+%patch1 -p1 -b .newppcelf
 popd
+%patch2 -p1 -b .noppcelfppc64
 
 #fix permissions
 find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c \) -exec chmod 644 {} \;
