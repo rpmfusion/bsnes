@@ -1,8 +1,8 @@
-%global vernumber 054
+%global vernumber 055
 
 Name:           bsnes
 Version:        0.%{vernumber}
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        SNES emulator focused on accuracy
 
 Group:          Applications/Emulators
@@ -83,6 +83,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Nov 02 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.055-1
+- Updated to 0.055
+
 * Wed Oct 28 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.054-2
 - Fixed the ppc-elf issue properly
 
