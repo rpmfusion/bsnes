@@ -1,4 +1,4 @@
-%global vernumber 058
+%global vernumber 059
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -12,7 +12,7 @@ URL:            http://byuu.org/bsnes/
 #http://byuu.org/download.php?file=%{name}_v%{vernumber}.tar.bz2
 Source0:        %{name}_v%{vernumber}.tar.bz2
 Source2:        README.bsnes
-Patch0:         bsnes-0.037a-strip.patch
+Patch0:         bsnes-0.059-strip.patch
 Patch1:         libco.ppc-elf-2.diff
 Patch2:         bsnes-0.054-noppcelfppc64.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -39,7 +39,7 @@ minimum system requirements for bsnes are quite high.
 
 %prep
 %setup -qc
-%patch0 -p0 -b .strip
+%patch0 -p1 -b .strip
 pushd src/lib/libco
 %patch1 -p1 -b .newppcelf
 popd
@@ -83,6 +83,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Jan 07 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.059-1
+- Updated to 0.059
+- Updated the strip patch
+
 * Sat Dec 12 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.058-1
 - Updated to 0.058
 
