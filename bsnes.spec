@@ -55,6 +55,11 @@ sed -i "s#-O3#$RPM_OPT_FLAGS#" src/Makefile
 #install fedora-specific readme
 install -pm 644 %{SOURCE2} README.Fedora
 
+#pulseaudio on fedora 11 is too old
+%if 0%{?fedora} < 12
+sed -i "s@audio.pulseaudio @@" src/Makefile
+%endif
+
 
 %build
 pushd src
@@ -86,6 +91,7 @@ rm -rf $RPM_BUILD_ROOT
 * Thu Jan 07 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.059-1
 - Updated to 0.059
 - Updated the strip patch
+- Disabled the better pulseaudio driver on everything below Fedora 12
 
 * Sat Dec 12 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.058-1
 - Updated to 0.058
