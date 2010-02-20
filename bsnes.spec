@@ -1,4 +1,6 @@
-%global vernumber 059
+%bcond_with snesreader
+
+%global vernumber 060
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -12,7 +14,6 @@ URL:            http://byuu.org/bsnes/
 #http://byuu.org/download.php?file=%{name}_v%{vernumber}.tar.bz2
 Source0:        %{name}_v%{vernumber}.tar.bz2
 Source2:        README.bsnes
-Patch0:         bsnes-0.059-strip.patch
 Patch1:         libco.ppc-elf-2.diff
 Patch2:         bsnes-0.054-noppcelfppc64.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -36,27 +37,94 @@ The emulator does not focus on things that would hinder accuracy. This
 includes speed and game-specific hacks for compatibility. As a result, the
 minimum system requirements for bsnes are quite high.
 
+%package        pixelshaders
+Summary:        Pixel shaders for %{name}
+Group:          Applications/Emulators
+Requires:       %{name} = %{version}-%{release}
+
+%description    pixelshaders
+This subpackage contains pixel shader effects for bsnes.
+
+%package        snesfilter
+Summary:        Visual filters for %{name}
+Group:          Applications/Emulators
+Requires:       %{name} = %{version}-%{release}
+
+%description    snesfilter
+This subpackage contains various video filters for bsnes.
+
+%if %{with snesreader}
+%package        snesreader
+Summary:        Compressed ROM images support for %{name}
+Group:          Applications/Emulators
+Requires:       %{name} = %{version}-%{release}
+
+%description    snesreader
+This subpackage enables support for various compressed images, like .zip, .7z,
+.rar and others.
+%endif
+
+%package        supergameboy
+Summary:        Super Game Boy emulation for %{name}
+Group:          Applications/Emulators
+Requires:       %{name} = %{version}-%{release}
+
+%description    supergameboy
+This package includes gambatte-based Super Game Boy emulation.
+
 
 %prep
 %setup -qc
-%patch0 -p1 -b .strip
 pushd src/lib/libco
 %patch1 -p1 -b .newppcelf
 popd
 %patch2 -p1 -b .noppcelfppc64
 
 #fix permissions
-find src -type f \( -name \*.cpp -or -name \*.hpp -or -name \*.h -or -name \*.c \) -exec chmod 644 {} \;
-chmod 644 src/data/*.html
+find . -type f -not -name \*.sh -exec chmod 644 {} \;
+
+#fix end-of-line encoding
+sed -i 's/\r//' pixelshaders/HLSL/sepia.fx
+sed -i 's/\r//' pixelshaders/Pixellate/fragment
+sed -i 's/\r//' pixelshaders/Pixellate/vertex
 
 #use system optflags
-sed -i "s#-O3#$RPM_OPT_FLAGS#" src/Makefile
+for sourcedir in snesfilter snesreader src supergameboy
+do
+    pushd $sourcedir    
+    sed -i "s#-O3#$RPM_OPT_FLAGS#" Makefile
+    popd
+done
+
+#don't strip the binaries prematurely
+for sourcedir in snesfilter snesreader src supergameboy
+do
+    pushd $sourcedir
+    sed -i "s/link += -s/link +=/" Makefile
+    popd
+done
 
 #install fedora-specific readme
 install -pm 644 %{SOURCE2} README.Fedora
 
+#pulseaudio on fedora 11 is too old
+%if 0%{?fedora} < 12
+sed -i "s@audio.pulseaudio @@" src/Makefile
+%endif
+
 
 %build
+%if %{with snesreader}
+for sourcedir in snesfilter snesreader supergameboy
+%else
+for sourcedir in snesfilter supergameboy
+%endif
+do
+    pushd $sourcedir
+    make %{?_smp_mflags} moc=moc-qt4
+    popd
+done
+
 pushd src
 make %{?_smp_mflags} platform=x compiler=gcc moc=moc-qt4
 
@@ -68,10 +136,53 @@ make install DESTDIR=$RPM_BUILD_ROOT prefix=%{_prefix}
 desktop-file-install --vendor=rpmfusion \
         --delete-original --dir $RPM_BUILD_ROOT%{_datadir}/applications \
         $RPM_BUILD_ROOT%{_datadir}/applications/bsnes.desktop
+popd
+install -d $RPM_BUILD_ROOT%{_libdir}
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}
+%if %{with snesreader}
+for sourcedir in snesfilter snesreader supergameboy
+%else
+for sourcedir in snesfilter supergameboy
+%endif
+do
+    pushd $sourcedir
+    install -pm 755 lib$sourcedir.so $RPM_BUILD_ROOT%{_libdir}/lib$sourcedir.so
+    popd
+done
+install -Dpm 644 pixelshaders/HDRTV/vertex $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/HDRTV/vertex
+install -Dpm 644 pixelshaders/HDRTV/fragment $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/HDRTV/fragment
+install -Dpm 644 pixelshaders/HLSL/sepia.fx $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/HLSL/sepia.fx
+install -Dpm 644 pixelshaders/Curvature/fragment $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/Curvature/fragment
+install -Dpm 644 pixelshaders/Scale2x/vertex $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/Scale2x/vertex
+install -Dpm 644 pixelshaders/Scale2x/fragment $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/Scale2x/fragment
+install -Dpm 644 pixelshaders/Pixellate/vertex $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/Pixellate/vertex
+install -Dpm 644 pixelshaders/Pixellate/fragment $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/Pixellate/fragment
+install -Dpm 644 pixelshaders/HQ2x/vertex $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/HQ2x/vertex
+install -Dpm 644 pixelshaders/HQ2x/fragment $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/HQ2x/fragment
 
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+
+%post snesfilter -p /sbin/ldconfig
+
+
+%postun snesfilter -p /sbin/ldconfig
+
+
+%if %{with snesreader}
+%post snesreader -p /sbin/ldconfig
+
+
+%postun snesreader -p /sbin/ldconfig
+%endif
+
+
+%post supergameboy -p /sbin/ldconfig
+
+
+%postun supergameboy -p /sbin/ldconfig
 
 
 %files
@@ -81,11 +192,35 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pixmaps/bsnes.png
 %{_datadir}/applications/rpmfusion-bsnes.desktop
 
+%files pixelshaders
+%defattr(-,root,root,-)
+%{_datadir}/%{name}
+
+%files snesfilter
+%defattr(-,root,root,-)
+%{_libdir}/libsnesfilter.so
+
+%if %{with snesreader}
+%files snesreader
+%defattr(-,root,root,-)
+%{_libdir}/libsnesreader.so
+%endif
+
+%files supergameboy
+%defattr(-,root,root,-)
+%{_libdir}/libsupergameboy.so
+
 
 %changelog
+* Sat Feb 20 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.060-1
+- Updated to 0.060
+- Use sed to prevent premature binaries stripping
+- Included supergameboy, snesfilter, pixelshaders and optionally snesreader
+
 * Thu Jan 07 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.059-1
 - Updated to 0.059
 - Updated the strip patch
+- Disabled the better pulseaudio driver on everything below Fedora 12
 
 * Sat Dec 12 2009 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.058-1
 - Updated to 0.058
