@@ -14,6 +14,7 @@ URL:            http://byuu.org/bsnes/
 #http://byuu.org/download.php?file=%{name}_v%{vernumber}.tar.bz2
 Source0:        %{name}_v%{vernumber}.tar.bz2
 Source2:        README.bsnes
+Patch0:         bsnes-0.060-dso.patch
 Patch1:         libco.ppc-elf-2.diff
 Patch2:         bsnes-0.054-noppcelfppc64.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -75,6 +76,7 @@ This package includes gambatte-based Super Game Boy emulation.
 
 %prep
 %setup -qc
+%patch0 -p1 -b .dso
 pushd src/lib/libco
 %patch1 -p1 -b .newppcelf
 popd
@@ -212,10 +214,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Sat Feb 20 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.060-1
+* Sun Feb 21 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.060-1
 - Updated to 0.060
 - Use sed to prevent premature binaries stripping
 - Included supergameboy, snesfilter, pixelshaders and optionally snesreader
+- Added patch to explicitly link against libdl
 
 * Thu Jan 07 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.059-1
 - Updated to 0.059
