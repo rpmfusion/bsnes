@@ -6,7 +6,7 @@ diff -up bsnes-0.060/src/Makefile.dso bsnes-0.060/src/Makefile
  
  ifeq ($(platform),x)
 -  link += -s
-+  link += -s -ldl -lX11 -lXext
++  link += -s -ldl -lX11 -lXext -lpulse
  
    ruby := video.glx video.xv video.qtraster video.sdl
    ruby += audio.alsa audio.openal audio.oss audio.pulseaudio audio.pulseaudiosimple audio.ao
