@@ -1,6 +1,6 @@
 %bcond_with snesreader
 
-%global vernumber 060
+%global vernumber 063
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -212,10 +212,15 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Sat Feb 20 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.060-1
+* Sun Mar 28 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.063-1
+- Updated to 0.063
+- Dropped upstreamed dso patch
+
+* Sun Feb 21 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.060-1
 - Updated to 0.060
 - Use sed to prevent premature binaries stripping
 - Included supergameboy, snesfilter, pixelshaders and optionally snesreader
+- Added patch to explicitly link against libdl
 
 * Thu Jan 07 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.059-1
 - Updated to 0.059
