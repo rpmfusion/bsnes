@@ -1,6 +1,6 @@
-diff -up bsnes-0.054/src/lib/libco/libco.c.noppcelfppc64 bsnes-0.054/src/lib/libco/libco.c
---- bsnes-0.054/src/lib/libco/libco.c.noppcelfppc64	2009-10-18 09:26:09.000000000 +0200
-+++ bsnes-0.054/src/lib/libco/libco.c	2009-10-28 20:17:02.000000000 +0100
+diff -up bsnes-0.064/src/libco/libco.c.noppcelfppc64 bsnes-0.064/src/libco/libco.c
+--- bsnes-0.064/src/libco/libco.c.noppcelfppc64	2010-04-12 06:29:18.000000000 +0200
++++ bsnes-0.064/src/libco/libco.c	2010-04-17 14:37:11.000000000 +0200
 @@ -8,7 +8,7 @@
    #include "x86.c"
  #elif defined(__GNUC__) && defined(__amd64__)
