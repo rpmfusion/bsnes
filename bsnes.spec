@@ -1,6 +1,6 @@
 %bcond_with snesreader
 
-%global vernumber 063
+%global vernumber 064
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -14,8 +14,8 @@ URL:            http://byuu.org/bsnes/
 #http://byuu.org/download.php?file=%{name}_v%{vernumber}.tar.bz2
 Source0:        %{name}_v%{vernumber}.tar.bz2
 Source2:        README.bsnes
-Patch1:         libco.ppc-elf-2.diff
-Patch2:         bsnes-0.054-noppcelfppc64.patch
+Patch1:         bsnes-0.064-newppcelf.patch
+Patch2:         bsnes-0.064-noppcelfppc64.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #bsnes does not use system snes_ntsc because the modified video processing
@@ -29,6 +29,8 @@ BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  SDL-devel
 BuildRequires:  qt-devel
 
+Obsoletes:      %{name}-pixelshaders < 0.064
+
 %description
 bsnes is an emulator that began development on 2004-10-14. The purpose of the
 emulator is a bit different from other emulators: it focuses on accuracy,
@@ -36,14 +38,6 @@ debugging functionality, and clean code.
 The emulator does not focus on things that would hinder accuracy. This
 includes speed and game-specific hacks for compatibility. As a result, the
 minimum system requirements for bsnes are quite high.
-
-%package        pixelshaders
-Summary:        Pixel shaders for %{name}
-Group:          Applications/Emulators
-Requires:       %{name} = %{version}-%{release}
-
-%description    pixelshaders
-This subpackage contains pixel shader effects for bsnes.
 
 %package        snesfilter
 Summary:        Visual filters for %{name}
@@ -75,18 +69,11 @@ This package includes gambatte-based Super Game Boy emulation.
 
 %prep
 %setup -qc
-pushd src/lib/libco
 %patch1 -p1 -b .newppcelf
-popd
 %patch2 -p1 -b .noppcelfppc64
 
 #fix permissions
 find . -type f -not -name \*.sh -exec chmod 644 {} \;
-
-#fix end-of-line encoding
-sed -i 's/\r//' pixelshaders/HLSL/sepia.fx
-sed -i 's/\r//' pixelshaders/Pixellate/fragment
-sed -i 's/\r//' pixelshaders/Pixellate/vertex
 
 #use system optflags
 for sourcedir in snesfilter snesreader src supergameboy
@@ -149,16 +136,6 @@ do
     install -pm 755 lib$sourcedir.so $RPM_BUILD_ROOT%{_libdir}/lib$sourcedir.so
     popd
 done
-install -Dpm 644 pixelshaders/HDRTV/vertex $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/HDRTV/vertex
-install -Dpm 644 pixelshaders/HDRTV/fragment $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/HDRTV/fragment
-install -Dpm 644 pixelshaders/HLSL/sepia.fx $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/HLSL/sepia.fx
-install -Dpm 644 pixelshaders/Curvature/fragment $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/Curvature/fragment
-install -Dpm 644 pixelshaders/Scale2x/vertex $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/Scale2x/vertex
-install -Dpm 644 pixelshaders/Scale2x/fragment $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/Scale2x/fragment
-install -Dpm 644 pixelshaders/Pixellate/vertex $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/Pixellate/vertex
-install -Dpm 644 pixelshaders/Pixellate/fragment $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/Pixellate/fragment
-install -Dpm 644 pixelshaders/HQ2x/vertex $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/HQ2x/vertex
-install -Dpm 644 pixelshaders/HQ2x/fragment $RPM_BUILD_ROOT%{_datadir}/%{name}/pixelshaders/HQ2x/fragment
 
 
 %clean
@@ -192,10 +169,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pixmaps/bsnes.png
 %{_datadir}/applications/rpmfusion-bsnes.desktop
 
-%files pixelshaders
-%defattr(-,root,root,-)
-%{_datadir}/%{name}
-
 %files snesfilter
 %defattr(-,root,root,-)
 %{_libdir}/libsnesfilter.so
@@ -212,6 +185,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Apr 17 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.064-1
+- Updated to 0.064
+- Rediffed the patches
+- Dropped pixelshaders subpackage since upstream did not ship it
+
 * Sun Mar 28 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.063-1
 - Updated to 0.063
 - Dropped upstreamed dso patch
