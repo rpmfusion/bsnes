@@ -96,7 +96,7 @@ install -pm 644 %{SOURCE2} README.Fedora
 
 #pulseaudio on fedora 11 is too old
 %if 0%{?fedora} < 12
-sed -i "s@audio.pulseaudio @@" src/Makefile
+sed -i "s@audio.pulseaudio @@" src/ui_qt/Makefile
 %endif
 
 
@@ -189,6 +189,7 @@ rm -rf $RPM_BUILD_ROOT
 - Updated to 0.064
 - Rediffed the patches
 - Dropped pixelshaders subpackage since upstream did not ship it
+- Applied the F-11 fix to the correct Makefile
 
 * Sun Mar 28 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.063-1
 - Updated to 0.063
