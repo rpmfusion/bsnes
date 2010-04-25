@@ -1,6 +1,7 @@
---- libco.orig/ppc-elf.c	Sat Oct 10 22:11:16 2009
-+++ libco/ppc-elf.c	Wed Oct 28 12:30:19 2009
-@@ -66,9 +66,15 @@
+diff -up bsnes-0.064/src/libco/ppc-elf.c.newppcelf bsnes-0.064/src/libco/ppc-elf.c
+--- bsnes-0.064/src/libco/ppc-elf.c.newppcelf	2010-04-12 06:29:18.000000000 +0200
++++ bsnes-0.064/src/libco/ppc-elf.c	2010-04-17 14:33:09.000000000 +0200
+@@ -66,9 +66,15 @@ typedef void * cothread_t;
  /*
   * co_active_context is either in a global offset table (if we are
   * compiling -fPIC or -fPIE) or has an absolute position.
