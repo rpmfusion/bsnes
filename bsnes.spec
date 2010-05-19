@@ -94,7 +94,7 @@ install -pm 644 %{SOURCE2} README.Fedora
 
 #pulseaudio on fedora 11 is too old
 %if 0%{?fedora} < 12
-sed -i "s@audio.pulseaudio @@" src/Makefile
+sed -i "s@audio.pulseaudio @@" src/ui_qt/Makefile
 %endif
 
 
