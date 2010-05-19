@@ -1,10 +1,8 @@
-%bcond_with snesreader
-
 %global vernumber 064
 
 Name:           bsnes
 Version:        0.%{vernumber}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        SNES emulator focused on accuracy
 
 Group:          Applications/Emulators
@@ -16,6 +14,7 @@ Source0:        %{name}_v%{vernumber}.tar.bz2
 Source2:        README.bsnes
 Patch1:         bsnes-0.064-newppcelf.patch
 Patch2:         bsnes-0.064-noppcelfppc64.patch
+Patch3:         bsnes-0.064-systemlibs.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #bsnes does not use system snes_ntsc because the modified video processing
@@ -47,7 +46,6 @@ Requires:       %{name} = %{version}-%{release}
 %description    snesfilter
 This subpackage contains various video filters for bsnes.
 
-%if %{with snesreader}
 %package        snesreader
 Summary:        Compressed ROM images support for %{name}
 Group:          Applications/Emulators
@@ -56,7 +54,6 @@ Requires:       %{name} = %{version}-%{release}
 %description    snesreader
 This subpackage enables support for various compressed images, like .zip, .7z,
 .rar and others.
-%endif
 
 %package        supergameboy
 Summary:        Super Game Boy emulation for %{name}
@@ -71,6 +68,7 @@ This package includes gambatte-based Super Game Boy emulation.
 %setup -qc
 %patch1 -p1 -b .newppcelf
 %patch2 -p1 -b .noppcelfppc64
+%patch3 -p1 -b .systemlibs
 
 #fix permissions
 find . -type f -not -name \*.sh -exec chmod 644 {} \;
@@ -96,16 +94,12 @@ install -pm 644 %{SOURCE2} README.Fedora
 
 #pulseaudio on fedora 11 is too old
 %if 0%{?fedora} < 12
-sed -i "s@audio.pulseaudio @@" src/ui_qt/Makefile
+sed -i "s@audio.pulseaudio @@" src/Makefile
 %endif
 
 
 %build
-%if %{with snesreader}
 for sourcedir in snesfilter snesreader supergameboy
-%else
-for sourcedir in snesfilter supergameboy
-%endif
 do
     pushd $sourcedir
     make %{?_smp_mflags} moc=moc-qt4
@@ -126,11 +120,7 @@ desktop-file-install --vendor=rpmfusion \
 popd
 install -d $RPM_BUILD_ROOT%{_libdir}
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}
-%if %{with snesreader}
 for sourcedir in snesfilter snesreader supergameboy
-%else
-for sourcedir in snesfilter supergameboy
-%endif
 do
     pushd $sourcedir
     install -pm 755 lib$sourcedir.so $RPM_BUILD_ROOT%{_libdir}/lib$sourcedir.so
@@ -173,11 +163,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_libdir}/libsnesfilter.so
 
-%if %{with snesreader}
 %files snesreader
 %defattr(-,root,root,-)
 %{_libdir}/libsnesreader.so
-%endif
 
 %files supergameboy
 %defattr(-,root,root,-)
@@ -185,11 +173,13 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed May 19 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.064-2
+- Enabled snesreader unconditionally (#1214). Credit goes to Chris Moeller.
+
 * Sat Apr 17 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.064-1
 - Updated to 0.064
 - Rediffed the patches
 - Dropped pixelshaders subpackage since upstream did not ship it
-- Applied the F-11 fix to the correct Makefile
 
 * Sun Mar 28 2010 Julian Sikorski <belegdol[at]gmail[dot]com> - 0.063-1
 - Updated to 0.063
