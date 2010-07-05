@@ -1,16 +1,14 @@
-%global vernumber 064
+%global vernumber 065
 
 Name:           bsnes
 Version:        0.%{vernumber}
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        SNES emulator focused on accuracy
 
 Group:          Applications/Emulators
 License:        GPLv2
 URL:            http://byuu.org/bsnes/
-#Get the source here:
-#http://byuu.org/download.php?file=%{name}_v%{vernumber}.tar.bz2
-Source0:        %{name}_v%{vernumber}.tar.bz2
+Source0:        http://bsnes.googlecode.com/files/%{name}_v%{vernumber}.tar.bz2
 Source2:        README.bsnes
 Patch1:         bsnes-0.064-newppcelf.patch
 Patch2:         bsnes-0.064-noppcelfppc64.patch
@@ -94,7 +92,7 @@ install -pm 644 %{SOURCE2} README.Fedora
 
 #pulseaudio on fedora 11 is too old
 %if 0%{?fedora} < 12
-sed -i "s@audio.pulseaudio @@" src/Makefile
+sed -i "s@audio.pulseaudio @@" src/ui_qt/Makefile
 %endif
 
 
@@ -173,6 +171,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Jul 03 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.065-1
+- Updated to 0.065
+- Updated Source0 to reflect new host (Google Code)
+
 * Wed May 19 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.064-2
 - Enabled snesreader unconditionally (#1214). Credit goes to Chris Moeller.
 
