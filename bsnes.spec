@@ -1,4 +1,4 @@
-%global vernumber 065
+%global vernumber 067
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -171,6 +171,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Aug 01 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.067-1
+- Updated to 0.067
+
 * Sat Jul 03 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.065-1
 - Updated to 0.065
 - Updated Source0 to reflect new host (Google Code)
