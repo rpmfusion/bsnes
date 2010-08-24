@@ -1,4 +1,4 @@
-%global vernumber 067
+%global vernumber 068
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -10,8 +10,8 @@ License:        GPLv2
 URL:            http://byuu.org/bsnes/
 Source0:        http://bsnes.googlecode.com/files/%{name}_v%{vernumber}.tar.bz2
 Source2:        README.bsnes
-Patch1:         bsnes-0.064-newppcelf.patch
-Patch2:         bsnes-0.064-noppcelfppc64.patch
+Patch1:         bsnes-0.068-newppcelf.patch
+Patch2:         bsnes-0.068-noppcelfppc64.patch
 Patch3:         bsnes-0.064-systemlibs.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -72,7 +72,7 @@ This package includes gambatte-based Super Game Boy emulation.
 find . -type f -not -name \*.sh -exec chmod 644 {} \;
 
 #use system optflags
-for sourcedir in snesfilter snesreader src supergameboy
+for sourcedir in snesfilter snesreader bsnes supergameboy
 do
     pushd $sourcedir    
     sed -i "s#-O3#$RPM_OPT_FLAGS#" Makefile
@@ -80,7 +80,7 @@ do
 done
 
 #don't strip the binaries prematurely
-for sourcedir in snesfilter snesreader src supergameboy
+for sourcedir in snesfilter snesreader bsnes supergameboy
 do
     pushd $sourcedir
     sed -i "s/link += -s/link +=/" Makefile
@@ -92,7 +92,7 @@ install -pm 644 %{SOURCE2} README.Fedora
 
 #pulseaudio on fedora 11 is too old
 %if 0%{?fedora} < 12
-sed -i "s@audio.pulseaudio @@" src/ui_qt/Makefile
+sed -i "s@audio.pulseaudio @@" bsnes/ui_qt/Makefile
 %endif
 
 
@@ -104,13 +104,13 @@ do
     popd
 done
 
-pushd src
+pushd bsnes
 make %{?_smp_mflags} platform=x compiler=gcc moc=moc-qt4
 
 
 %install
 rm -rf $RPM_BUILD_ROOT
-pushd src
+pushd bsnes
 make install DESTDIR=$RPM_BUILD_ROOT prefix=%{_prefix}      
 desktop-file-install --vendor=rpmfusion \
         --delete-original --dir $RPM_BUILD_ROOT%{_datadir}/applications \
@@ -152,8 +152,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc README.Fedora src/data/*.html
-%{_bindir}/bsnes
+%doc README.Fedora bsnes/qt/data/*.html
+%{_bindir}/bsnes-compatibility
 %{_datadir}/pixmaps/bsnes.png
 %{_datadir}/applications/rpmfusion-bsnes.desktop
 
@@ -171,6 +171,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Aug 23 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.068-1
+- Updated to 0.068
+- Updated both ppc elf patches
+- Adapted to new source structure
+
 * Sun Aug 01 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.067-1
 - Updated to 0.067
 
