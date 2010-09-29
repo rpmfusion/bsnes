@@ -1,4 +1,4 @@
-%global vernumber 068
+%global vernumber 070
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -171,6 +171,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Sep 29 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.070-1
+- Updated to 0.070
+
 * Mon Aug 23 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.068-1
 - Updated to 0.068
 - Updated both ppc elf patches
