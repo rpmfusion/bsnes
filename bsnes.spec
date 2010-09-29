@@ -10,6 +10,7 @@ License:        GPLv2
 URL:            http://byuu.org/bsnes/
 Source0:        http://bsnes.googlecode.com/files/%{name}_v%{vernumber}.tar.bz2
 Source2:        README.bsnes
+Patch0:         bsnes-0.070-nogconftool.patch
 Patch1:         bsnes-0.068-newppcelf.patch
 Patch2:         bsnes-0.068-noppcelfppc64.patch
 Patch3:         bsnes-0.064-systemlibs.patch
@@ -64,6 +65,7 @@ This package includes gambatte-based Super Game Boy emulation.
 
 %prep
 %setup -qc
+%patch0 -p1 -b .nogconftool
 %patch1 -p1 -b .newppcelf
 %patch2 -p1 -b .noppcelfppc64
 %patch3 -p1 -b .systemlibs
@@ -173,6 +175,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Sep 29 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.070-1
 - Updated to 0.070
+- Don't change the way menus look
 
 * Mon Aug 23 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.068-1
 - Updated to 0.068
