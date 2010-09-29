@@ -154,8 +154,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc README.Fedora bsnes/qt/data/*.html
-%{_bindir}/bsnes-compatibility
+%doc README.Fedora bsnes/ui-qt/data/*.html
+%{_bindir}/bsnes
 %{_datadir}/pixmaps/bsnes.png
 %{_datadir}/applications/rpmfusion-bsnes.desktop
 
@@ -176,6 +176,8 @@ rm -rf $RPM_BUILD_ROOT
 * Wed Sep 29 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.070-1
 - Updated to 0.070
 - Don't change the way menus look
+- Updated the qt folder path again
+- Removed the executable suffix
 
 * Mon Aug 23 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.068-1
 - Updated to 0.068
