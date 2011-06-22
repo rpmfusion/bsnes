@@ -11,8 +11,8 @@ URL:            http://byuu.org/bsnes/
 Source0:        http://bsnes.googlecode.com/files/%{name}_v%{vernumber}-source.tar.bz2
 Source2:        README.bsnes
 Patch0:         bsnes-0.079-gcc46.patch
-Patch1:         bsnes-0.079-crashfix.patch
-Patch2:         bsnes-0.079-nocheats.
+Patch1:	        bsnes-0.079-systemwide.patch
+Patch2:         bsnes-0.079-gtk.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #bsnes does not use system snes_ntsc because the modified video processing
@@ -20,11 +20,11 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 #isn't available when the library is built stand alone
 BuildRequires:  desktop-file-utils
 BuildRequires:  freealut-devel
+BuildRequires:  gtk2-devel
 BuildRequires:  libao-devel     
 BuildRequires:  libXv-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  SDL-devel
-BuildRequires:  qt-devel
 
 Obsoletes:      %{name}-pixelshaders < 0.064
 Obsoletes:      %{name}-snesfilter < 0.079
@@ -43,9 +43,8 @@ minimum system requirements for bsnes are quite high.
 %prep
 %setup -q -n %{name}_v%{vernumber}-source
 %patch0 -p1 -b .gcc46
-%patch1 -p1 -b .crashfix
-%patch2 -p1 -b .nocheats
-
+%patch1 -p1 -b .systemwide
+%patch2 -p1 -b .gtk
 
 #fix permissions
 find . -type f -not -name \*.sh -exec chmod 644 {} \;
@@ -53,19 +52,23 @@ find . -type f -not -name \*.sh -exec chmod 644 {} \;
 #use system optflags
 sed -i "s/-O3/$RPM_OPT_FLAGS/" bsnes/Makefile
 sed -i "s/-O3/$RPM_OPT_FLAGS -fPIC/" snesfilter/Makefile
-sed -i "s/-O3/$RPM_OPT_FLAGS/" snespurify/cc-qt.sh
+sed -i "s/-O3/$RPM_OPT_FLAGS/" snespurify/cc-gtk.sh
 
 #don't strip the binaries prematurely
 sed -i "s/link += -s/link +=/" bsnes/Makefile
 sed -i "s/link    := -s/link    :=/" snesfilter/Makefile
-sed -i "s/-s //" snespurify/cc-qt.sh
+sed -i "s/-s //" snespurify/cc-gtk.sh
 
 #use the proper compiler and moc commands
-sed -i "s/g++-4.5/g++/" snespurify/cc-qt.sh
-sed -i "s/moc/moc-qt4/" snespurify/cc-qt.sh
+sed -i "s/g++-4.5/g++/" snespurify/cc-gtk.sh
 
 #install fedora-specific readme
 install -pm 644 %{SOURCE2} README.Fedora
+
+#use proper system-wide paths for filters and cheats.xml
+sed -i 's@path.home("cheats.xml")@"/usr/share/bsnes/cheats.xml"@' \
+    bsnes/ui/tools/cheat-database.cpp
+sed -i 's@/usr/lib@%{_libdir}@' bsnes/ui/general/main-window.cpp
 
 
 %build
@@ -76,7 +79,7 @@ pushd snesfilter
 make %{?_smp_mflags} compiler=gcc
 popd
 pushd snespurify
-./cc-qt.sh
+./cc-gtk.sh
 popd
 
 
@@ -90,9 +93,9 @@ desktop-file-install --vendor=rpmfusion \
 popd
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}
 install -pm 644 bsnes/data/cheats.xml $RPM_BUILD_ROOT%{_datadir}/%{name}
-install -d $RPM_BUILD_ROOT%{_libexecdir}/%{name}/filters
-install -pm 755 snesfilter/out/*.filter $RPM_BUILD_ROOT%{_libexecdir}/%{name}/filters
-install -pm 755 snespurify/snespurify-qt $RPM_BUILD_ROOT%{_bindir}
+install -d $RPM_BUILD_ROOT%{_libdir}/%{name}/filters
+install -pm 755 snesfilter/out/*.filter $RPM_BUILD_ROOT%{_libdir}/%{name}/filters
+install -pm 755 snespurify/snespurify-gtk $RPM_BUILD_ROOT%{_bindir}
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/shaders
 install -pm 644 snesshader/*.shader $RPM_BUILD_ROOT%{_datadir}/%{name}/shaders
 
@@ -104,8 +107,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc README.Fedora
 %{_bindir}/bsnes
-%{_bindir}/snespurify-qt
-%{_libexecdir}/bsnes
+%{_bindir}/snespurify-gtk
+%{_libdir}/bsnes
 %{_datadir}/bsnes
 %{_datadir}/pixmaps/bsnes.png
 %{_datadir}/applications/rpmfusion-bsnes.desktop
@@ -116,7 +119,10 @@ rm -rf $RPM_BUILD_ROOT
 - Updated to 0.079
 - Dropped subpackages, they are too small to be worth it
 - Updated the Fedora readme
-- Added patches by Themaister
+- Added gcc-4.6 and systemwide patches by Themaister
+- Try to handle system-wide cheats, filters and shaders properly
+- Switched to accuracy profile (slower)
+- Switched to gtk ui
 
 * Sun Nov 21 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.072-1
 - Updated to 0.072
