@@ -1,4 +1,4 @@
-%global vernumber 072
+%global vernumber 079
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -8,12 +8,11 @@ Summary:        SNES emulator focused on accuracy
 Group:          Applications/Emulators
 License:        GPLv2
 URL:            http://byuu.org/bsnes/
-Source0:        http://bsnes.googlecode.com/files/%{name}_v%{vernumber}.tar.bz2
+Source0:        http://bsnes.googlecode.com/files/%{name}_v%{vernumber}-source.tar.bz2
 Source2:        README.bsnes
-Patch0:         bsnes-0.072-nocheats.patch
-Patch1:         bsnes-0.068-newppcelf.patch
-Patch2:         bsnes-0.068-noppcelfppc64.patch
-Patch3:         bsnes-0.064-systemlibs.patch
+Patch0:         bsnes-0.079-gcc46.patch
+Patch1:	        bsnes-0.079-systemwide.patch
+Patch2:         bsnes-0.079-gtk.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #bsnes does not use system snes_ntsc because the modified video processing
@@ -21,13 +20,16 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 #isn't available when the library is built stand alone
 BuildRequires:  desktop-file-utils
 BuildRequires:  freealut-devel
+BuildRequires:  gtk2-devel
 BuildRequires:  libao-devel     
 BuildRequires:  libXv-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  SDL-devel
-BuildRequires:  qt-devel
 
 Obsoletes:      %{name}-pixelshaders < 0.064
+Obsoletes:      %{name}-snesfilter < 0.079
+Obsoletes:      %{name}-snesreader < 0.079
+Obsoletes:      %{name}-supergameboy < 0.079
 
 %description
 bsnes is an emulator that began development on 2004-10-14. The purpose of the
@@ -37,77 +39,48 @@ The emulator does not focus on things that would hinder accuracy. This
 includes speed and game-specific hacks for compatibility. As a result, the
 minimum system requirements for bsnes are quite high.
 
-%package        snesfilter
-Summary:        Visual filters for %{name}
-Group:          Applications/Emulators
-Requires:       %{name} = %{version}-%{release}
-
-%description    snesfilter
-This subpackage contains various video filters for bsnes.
-
-%package        snesreader
-Summary:        Compressed ROM images support for %{name}
-Group:          Applications/Emulators
-Requires:       %{name} = %{version}-%{release}
-
-%description    snesreader
-This subpackage enables support for various compressed images, like .zip, .7z,
-.rar and others.
-
-%package        supergameboy
-Summary:        Super Game Boy emulation for %{name}
-Group:          Applications/Emulators
-Requires:       %{name} = %{version}-%{release}
-
-%description    supergameboy
-This package includes gambatte-based Super Game Boy emulation.
-
 
 %prep
-%setup -qc
-%patch0 -p1 -b .nocheats
-%patch1 -p1 -b .newppcelf
-%patch2 -p1 -b .noppcelfppc64
-%patch3 -p1 -b .systemlibs
+%setup -q -n %{name}_v%{vernumber}-source
+%patch0 -p1 -b .gcc46
+%patch1 -p1 -b .systemwide
+%patch2 -p1 -b .gtk
 
 #fix permissions
 find . -type f -not -name \*.sh -exec chmod 644 {} \;
 
 #use system optflags
-for sourcedir in snesfilter snesreader bsnes supergameboy
-do
-    pushd $sourcedir    
-    sed -i "s#-O3#$RPM_OPT_FLAGS#" Makefile
-    popd
-done
+sed -i "s/-O3/$RPM_OPT_FLAGS/" bsnes/Makefile
+sed -i "s/-O3/$RPM_OPT_FLAGS -fPIC/" snesfilter/Makefile
+sed -i "s/-O3/$RPM_OPT_FLAGS/" snespurify/cc-gtk.sh
 
 #don't strip the binaries prematurely
-for sourcedir in snesfilter snesreader bsnes supergameboy
-do
-    pushd $sourcedir
-    sed -i "s/link += -s/link +=/" Makefile
-    popd
-done
+sed -i "s/link += -s/link +=/" bsnes/Makefile
+sed -i "s/link    := -s/link    :=/" snesfilter/Makefile
+sed -i "s/-s //" snespurify/cc-gtk.sh
+
+#use the proper compiler and moc commands
+sed -i "s/g++-4.5/g++/" snespurify/cc-gtk.sh
 
 #install fedora-specific readme
 install -pm 644 %{SOURCE2} README.Fedora
 
-#pulseaudio on fedora 11 is too old
-%if 0%{?fedora} < 12
-sed -i "s@audio.pulseaudio @@" bsnes/ui_qt/Makefile
-%endif
+#use proper system-wide paths for filters and cheats.xml
+sed -i 's@path.home("cheats.xml")@"/usr/share/bsnes/cheats.xml"@' \
+    bsnes/ui/tools/cheat-database.cpp
+sed -i 's@/usr/lib@%{_libdir}@' bsnes/ui/general/main-window.cpp
 
 
 %build
-for sourcedir in snesfilter snesreader supergameboy
-do
-    pushd $sourcedir
-    make %{?_smp_mflags} moc=moc-qt4 compiler=gcc
-    popd
-done
-
 pushd bsnes
-make %{?_smp_mflags} platform=x compiler=gcc moc=moc-qt4 profile=compatibility ui=ui-qt
+make %{?_smp_mflags} compiler=gcc
+popd
+pushd snesfilter
+make %{?_smp_mflags} compiler=gcc
+popd
+pushd snespurify
+./cc-gtk.sh
+popd
 
 
 %install
@@ -118,61 +91,39 @@ desktop-file-install --vendor=rpmfusion \
         --delete-original --dir $RPM_BUILD_ROOT%{_datadir}/applications \
         $RPM_BUILD_ROOT%{_datadir}/applications/bsnes.desktop
 popd
-install -d $RPM_BUILD_ROOT%{_libdir}
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}
-for sourcedir in snesfilter snesreader supergameboy
-do
-    pushd $sourcedir
-    install -pm 755 lib$sourcedir.so $RPM_BUILD_ROOT%{_libdir}/lib$sourcedir.so
-    popd
-done
-
+install -pm 644 bsnes/data/cheats.xml $RPM_BUILD_ROOT%{_datadir}/%{name}
+install -d $RPM_BUILD_ROOT%{_libdir}/%{name}/filters
+install -pm 755 snesfilter/out/*.filter $RPM_BUILD_ROOT%{_libdir}/%{name}/filters
+install -pm 755 snespurify/snespurify-gtk $RPM_BUILD_ROOT%{_bindir}
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/shaders
+install -pm 644 snesshader/*.shader $RPM_BUILD_ROOT%{_datadir}/%{name}/shaders
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 
-%post snesfilter -p /sbin/ldconfig
-
-
-%postun snesfilter -p /sbin/ldconfig
-
-
-%if %{with snesreader}
-%post snesreader -p /sbin/ldconfig
-
-
-%postun snesreader -p /sbin/ldconfig
-%endif
-
-
-%post supergameboy -p /sbin/ldconfig
-
-
-%postun supergameboy -p /sbin/ldconfig
-
-
 %files
 %defattr(-,root,root,-)
-%doc README.Fedora bsnes/ui-qt/data/*.html
+%doc README.Fedora
 %{_bindir}/bsnes
+%{_bindir}/snespurify-gtk
+%{_libdir}/bsnes
+%{_datadir}/bsnes
 %{_datadir}/pixmaps/bsnes.png
 %{_datadir}/applications/rpmfusion-bsnes.desktop
 
-%files snesfilter
-%defattr(-,root,root,-)
-%{_libdir}/libsnesfilter.so
-
-%files snesreader
-%defattr(-,root,root,-)
-%{_libdir}/libsnesreader.so
-
-%files supergameboy
-%defattr(-,root,root,-)
-%{_libdir}/libsupergameboy.so
-
 
 %changelog
+* Tue Jun 21 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.079-1
+- Updated to 0.079
+- Dropped subpackages, they are too small to be worth it
+- Updated the Fedora readme
+- Added gcc-4.6 and systemwide patches by Themaister
+- Try to handle system-wide cheats, filters and shaders properly
+- Switched to accuracy profile (slower)
+- Switched to gtk ui
+
 * Sun Nov 21 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.072-1
 - Updated to 0.072
 - Dropped gconf patch, added cheats one

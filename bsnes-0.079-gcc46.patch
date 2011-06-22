@@ -1,0 +1,51 @@
+diff -up bsnes_v079-source/bsnes/snes/chip/icd2/interface/interface.cpp.gcc46 bsnes_v079-source/bsnes/snes/chip/icd2/interface/interface.cpp
+--- bsnes_v079-source/bsnes/snes/chip/icd2/interface/interface.cpp.gcc46	2011-05-08 13:14:20.000000000 +0200
++++ bsnes_v079-source/bsnes/snes/chip/icd2/interface/interface.cpp	2011-06-21 00:02:22.972853738 +0200
+@@ -101,7 +101,7 @@ bool ICD2::input_poll(unsigned id) {
+     case 3: data = ~r6007; break;
+   }
+ 
+-  switch(id) {
++  switch((GameBoy::Input)id) {
+     case GameBoy::Input::Start:  return data & 0x80;
+     case GameBoy::Input::Select: return data & 0x40;
+     case GameBoy::Input::B:      return data & 0x20;
+diff -up bsnes_v079-source/bsnes/ui/input/input.cpp.gcc46 bsnes_v079-source/bsnes/ui/input/input.cpp
+--- bsnes_v079-source/bsnes/ui/input/input.cpp.gcc46	2011-03-24 19:33:58.000000000 +0100
++++ bsnes_v079-source/bsnes/ui/input/input.cpp	2011-06-21 00:02:22.971853731 +0200
+@@ -82,7 +82,7 @@ void InputMapper::Gamepad::create(const 
+ }
+ 
+ int16_t InputMapper::Gamepad::poll(unsigned id) {
+-  switch(id) {
++  switch((SNES::Input::JoypadID)id) {
+     case SNES::Input::JoypadID::Up:     return up.poll();
+     case SNES::Input::JoypadID::Down:   return down.poll() & !up.poll();
+     case SNES::Input::JoypadID::Left:   return left.poll();
+@@ -118,7 +118,7 @@ void InputMapper::Mouse::create(const ch
+ }
+ 
+ int16_t InputMapper::Mouse::poll(unsigned id) {
+-  switch(id) {
++  switch((SNES::Input::MouseID)id) {
+     case SNES::Input::MouseID::X: return x.poll();
+     case SNES::Input::MouseID::Y: return y.poll();
+     case SNES::Input::MouseID::Left: return left.poll();
+@@ -150,7 +150,7 @@ void InputMapper::SuperScope::create(con
+ }
+ 
+ int16_t InputMapper::SuperScope::poll(unsigned id) {
+-  switch(id) {
++  switch((SNES::Input::SuperScopeID)id) {
+     case SNES::Input::SuperScopeID::X: return x.poll();
+     case SNES::Input::SuperScopeID::Y: return y.poll();
+     case SNES::Input::SuperScopeID::Trigger: return trigger.poll();
+@@ -182,7 +182,7 @@ void InputMapper::Justifier::create(cons
+ }
+ 
+ int16_t InputMapper::Justifier::poll(unsigned id) {
+-  switch(id) {
++  switch((SNES::Input::JustifierID)id) {
+     case SNES::Input::JustifierID::X: return x.poll();
+     case SNES::Input::JustifierID::Y: return y.poll();
+     case SNES::Input::JustifierID::Trigger: return trigger.poll();

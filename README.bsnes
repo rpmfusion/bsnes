@@ -1,18 +1,12 @@
 RPM Fusion bsnes package
 ==============================================================================
 
-1. Problems with PulseAudio
+RPM Fusion bsnes package is patched to install cheat.xml, filters and shaders
+in system-wide location. If you run into issues using these, please don't
+complain to upstream, but use RPM Fusion bugzilla first.
 
-There are slight problems with some of the bsnes audio drivers and PulseAudio. Namely, the libao driver will not work, and the OSS driver will not work with padsp. Other drivers work with the default Fedora configuration. Please note that the emulator author recommends using the ALSA driver over the native PulseAudio one due to limitations in the latter. bsnes audio drivers can be changed by going to Settings -> Configuration -> Advanced. Program needs to be restarted for the changes to have effect.
+Moreover, due to [1] newer versions of bsnes are more strict when it comes to
+file formats accepted. The snespurify-qt utility can be used to convert the
+images. They have to be uncompressed.
 
-
-2. Using system zlib
-
-This is the post byuu made on zsnes boards when asked to merge the system-zlib patch (it was more complex at that stage, using system libs was optional, but since it was not going to be merged anyway, I decided to make it simpler):
-
-
-I don't really want to add this change to bsnes, no. A system-wide zlib would require a DLL for Windows, and I see no reason to provide a lean, stripped down zlib along with bsnes for Windows users, yet have an option to use the system version for Linux (especially when there is no similar lib for JMA), just to appease a few people with nothing better to do than complain about random garbage.
-
-However, feel free to appease the Fedora development team by changing that in your source tree if you like. My sincere apologies that you'll have to keep backporting the change.
-
-I don't want any part in trying to appease these people. They constantly bring up crap about non-commercial clauses, about using a 64-byte IPLROM, about compiling in support for OSS by default, and now about a massive ~80kb that can be shaved off the bsnes binary by adding extra dependencies to the emulator. Perhaps I should just start offering a raw Linux binary on my website ala nVidia, Macromedia et al.
+[1] http://byuu.org/bsnes/legacy-formats
