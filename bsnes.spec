@@ -1,4 +1,4 @@
-%global vernumber 079
+%global vernumber 080
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -11,7 +11,7 @@ URL:            http://byuu.org/bsnes/
 Source0:        http://bsnes.googlecode.com/files/%{name}_v%{vernumber}-source.tar.bz2
 Source2:        README.bsnes
 Patch0:         bsnes-0.079-gcc46.patch
-Patch1:	        bsnes-0.079-systemwide.patch
+Patch1:         bsnes-0.079-systemwide.patch
 Patch2:         bsnes-0.079-gtk.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -115,6 +115,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Jul 03 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.080-1
+- Updated to 0.080
+- Updated the gcc-4.6 patch
+
 * Tue Jun 21 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.079-1
 - Updated to 0.079
 - Dropped subpackages, they are too small to be worth it
