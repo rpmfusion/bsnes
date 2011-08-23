@@ -1,4 +1,4 @@
-%global vernumber 080
+%global vernumber 082
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -10,9 +10,7 @@ License:        GPLv2
 URL:            http://byuu.org/bsnes/
 Source0:        http://bsnes.googlecode.com/files/%{name}_v%{vernumber}-source.tar.bz2
 Source2:        README.bsnes
-Patch0:         bsnes-0.079-gcc46.patch
 Patch1:         bsnes-0.079-systemwide.patch
-Patch2:         bsnes-0.079-gtk.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #bsnes does not use system snes_ntsc because the modified video processing
@@ -42,9 +40,7 @@ minimum system requirements for bsnes are quite high.
 
 %prep
 %setup -q -n %{name}_v%{vernumber}-source
-%patch0 -p1 -b .gcc46
 %patch1 -p1 -b .systemwide
-%patch2 -p1 -b .gtk
 
 #fix permissions
 find . -type f -not -name \*.sh -exec chmod 644 {} \;
@@ -73,7 +69,7 @@ sed -i 's@/usr/lib@%{_libdir}@' bsnes/ui/general/main-window.cpp
 
 %build
 pushd bsnes
-make %{?_smp_mflags} compiler=gcc
+make %{?_smp_mflags} compiler=gcc phoenix=gtk
 popd
 pushd snesfilter
 make %{?_smp_mflags} compiler=gcc
@@ -86,7 +82,7 @@ popd
 %install
 rm -rf $RPM_BUILD_ROOT
 pushd bsnes
-make install DESTDIR=$RPM_BUILD_ROOT prefix=%{_prefix}      
+make install DESTDIR=$RPM_BUILD_ROOT prefix=%{_prefix}
 desktop-file-install --vendor=rpmfusion \
         --delete-original --dir $RPM_BUILD_ROOT%{_datadir}/applications \
         $RPM_BUILD_ROOT%{_datadir}/applications/bsnes.desktop
@@ -115,6 +111,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Aug 23 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.082-1
+- Updated to 0.082
+- Dropped unneeded patches
+
 * Sun Jul 03 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.080-1
 - Updated to 0.080
 - Updated the gcc-4.6 patch
