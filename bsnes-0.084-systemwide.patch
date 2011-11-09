@@ -1,0 +1,48 @@
+diff -up bsnes_v084-source/bsnes/ui/general/main-window.cpp.systemwide bsnes_v084-source/bsnes/ui/general/main-window.cpp
+--- bsnes_v084-source/bsnes/ui/general/main-window.cpp.systemwide	2011-11-07 10:10:46.000000000 +0100
++++ bsnes_v084-source/bsnes/ui/general/main-window.cpp	2011-11-09 23:27:47.964132102 +0100
+@@ -332,7 +332,7 @@ void MainWindow::synchronize() {
+ }
+ 
+ void MainWindow::setupVideoFilters() {
+-  string path = { application->basepath, "filters/" };
++  string path = { "/usr/lib/bsnes/filters/" };
+   lstring files = directory::files(path, "*.filter");
+   if(files.size() == 0) {
+     path = { application->userpath, "filters/" };
+@@ -363,7 +363,7 @@ void MainWindow::setupVideoFilters() {
+ }
+ 
+ void MainWindow::setupVideoShaders() {
+-  string path = { application->basepath, "shaders/" };
++  string path = { "/usr/share/bsnes/shaders/" };
+   lstring files = directory::files(path, { "*.", config->video.driver, ".shader" });
+   if(files.size() == 0) {
+     path = { application->userpath, "shaders/" };
+diff -up bsnes_v084-source/bsnes/ui/Makefile.systemwide bsnes_v084-source/bsnes/ui/Makefile
+--- bsnes_v084-source/bsnes/ui/Makefile.systemwide	2011-10-13 21:54:51.000000000 +0200
++++ bsnes_v084-source/bsnes/ui/Makefile	2011-11-09 23:26:20.834677869 +0100
+@@ -77,11 +77,8 @@ endif
+ install:
+ ifeq ($(platform),x)
+ 	install -D -m 755 out/$(name) $(DESTDIR)$(prefix)/bin/$(name)
+-	mkdir -p ~/.config/$(name)
+ 	install -D -m 644 data/$(name).png $(DESTDIR)$(prefix)/share/pixmaps/$(name).png
+ 	install -D -m 644 data/$(name).desktop $(DESTDIR)$(prefix)/share/applications/$(name).desktop
+-	cp data/cheats.bml ~/.config/$(name)/cheats.bml
+-	chmod 777 ~/.config/$(name) ~/.config/$(name)/cheats.bml
+ endif
+ 
+ uninstall:
+diff -up bsnes_v084-source/bsnes/ui/tools/cheat-database.cpp.systemwide bsnes_v084-source/bsnes/ui/tools/cheat-database.cpp
+--- bsnes_v084-source/bsnes/ui/tools/cheat-database.cpp.systemwide	2011-11-03 02:34:23.000000000 +0100
++++ bsnes_v084-source/bsnes/ui/tools/cheat-database.cpp	2011-11-09 23:28:52.984471072 +0100
+@@ -34,7 +34,7 @@ void CheatDatabase::findCodes() {
+   cheatCode.reset();
+ 
+   string data;
+-  data.readfile(application->path("cheats.bml"));
++  data.readfile("/usr/share/bsnes/cheats.bml");
+   BML::Document document(data);
+   for(auto &root : document) {
+     if(root.name != "cartridge") continue;
