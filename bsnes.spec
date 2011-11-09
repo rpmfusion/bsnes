@@ -1,4 +1,4 @@
-%global vernumber 082
+%global vernumber 084
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -6,11 +6,11 @@ Release:        1%{?dist}
 Summary:        SNES emulator focused on accuracy
 
 Group:          Applications/Emulators
-License:        GPLv2
+License:        GPLv3
 URL:            http://byuu.org/bsnes/
 Source0:        http://bsnes.googlecode.com/files/%{name}_v%{vernumber}-source.tar.bz2
 Source2:        README.bsnes
-Patch1:         bsnes-0.079-systemwide.patch
+Patch1:         bsnes-0.084-systemwide.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #bsnes does not use system snes_ntsc because the modified video processing
@@ -19,7 +19,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  desktop-file-utils
 BuildRequires:  freealut-devel
 BuildRequires:  gtk2-devel
-BuildRequires:  libao-devel     
+BuildRequires:  libao-devel
 BuildRequires:  libXv-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  SDL-devel
@@ -39,7 +39,7 @@ minimum system requirements for bsnes are quite high.
 
 
 %prep
-%setup -q -n %{name}_v%{vernumber}-source
+%setup -qcn %{name}_v%{vernumber}-source
 %patch1 -p1 -b .systemwide
 
 #fix permissions
@@ -61,9 +61,7 @@ sed -i "s/g++-4.5/g++/" snespurify/cc-gtk.sh
 #install fedora-specific readme
 install -pm 644 %{SOURCE2} README.Fedora
 
-#use proper system-wide paths for filters and cheats.xml
-sed -i 's@path.home("cheats.xml")@"/usr/share/bsnes/cheats.xml"@' \
-    bsnes/ui/tools/cheat-database.cpp
+#use proper system-wide path for filters
 sed -i 's@/usr/lib@%{_libdir}@' bsnes/ui/general/main-window.cpp
 
 
@@ -88,7 +86,7 @@ desktop-file-install --vendor=rpmfusion \
         $RPM_BUILD_ROOT%{_datadir}/applications/bsnes.desktop
 popd
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}
-install -pm 644 bsnes/data/cheats.xml $RPM_BUILD_ROOT%{_datadir}/%{name}
+install -pm 644 bsnes/data/cheats.bml $RPM_BUILD_ROOT%{_datadir}/%{name}
 install -d $RPM_BUILD_ROOT%{_libdir}/%{name}/filters
 install -pm 755 snesfilter/out/*.filter $RPM_BUILD_ROOT%{_libdir}/%{name}/filters
 install -pm 755 snespurify/snespurify-gtk $RPM_BUILD_ROOT%{_bindir}
@@ -111,6 +109,13 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Nov 09 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.084-1
+- Updated to 0.084
+- License is now GPLv3
+- Updated the systemwide patch
+- cheats.xml → cheats.bml
+- Apply the change enabling system-wide cheats as a patch
+
 * Tue Aug 23 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.082-1
 - Updated to 0.082
 - Dropped unneeded patches
