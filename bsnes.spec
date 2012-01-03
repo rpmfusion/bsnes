@@ -1,4 +1,4 @@
-%global vernumber 084
+%global vernumber 085
 
 Name:           bsnes
 Version:        0.%{vernumber}
@@ -10,7 +10,7 @@ License:        GPLv3
 URL:            http://byuu.org/bsnes/
 Source0:        http://bsnes.googlecode.com/files/%{name}_v%{vernumber}-source.tar.bz2
 Source2:        README.bsnes
-Patch1:         bsnes-0.084-systemwide.patch
+Patch1:         bsnes-0.085-systemwide.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #bsnes does not use system snes_ntsc because the modified video processing
@@ -39,7 +39,7 @@ minimum system requirements for bsnes are quite high.
 
 
 %prep
-%setup -qcn %{name}_v%{vernumber}-source
+%setup -qn %{name}_v%{vernumber}-source
 %patch1 -p1 -b .systemwide
 
 #fix permissions
@@ -86,7 +86,7 @@ desktop-file-install --vendor=rpmfusion \
         $RPM_BUILD_ROOT%{_datadir}/applications/bsnes.desktop
 popd
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}
-install -pm 644 bsnes/data/cheats.bml $RPM_BUILD_ROOT%{_datadir}/%{name}
+install -pm 644 bsnes/data/cheats.xml $RPM_BUILD_ROOT%{_datadir}/%{name}
 install -d $RPM_BUILD_ROOT%{_libdir}/%{name}/filters
 install -pm 755 snesfilter/out/*.filter $RPM_BUILD_ROOT%{_libdir}/%{name}/filters
 install -pm 755 snespurify/snespurify-gtk $RPM_BUILD_ROOT%{_bindir}
@@ -109,6 +109,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Jan 03 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.085-1
+- Updated to 0.085
+- Updated the systemwide patch
+- cheats.bml → cheats.xml
+
 * Wed Nov 09 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.084-1
 - Updated to 0.084
 - License is now GPLv3
