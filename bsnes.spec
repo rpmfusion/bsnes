@@ -1,17 +1,15 @@
-%global vernumber 085
+%global vernumber 086
 
 Name:           bsnes
 Version:        0.%{vernumber}
 Release:        1%{?dist}
 Summary:        SNES emulator focused on accuracy
 
-Group:          Applications/Emulators
 License:        GPLv3
 URL:            http://byuu.org/bsnes/
 Source0:        http://bsnes.googlecode.com/files/%{name}_v%{vernumber}-source.tar.bz2
 Source2:        README.bsnes
-Patch1:         bsnes-0.085-systemwide.patch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Patch1:         bsnes-0.086-systemwide.patch
 
 #bsnes does not use system snes_ntsc because the modified video processing
 #filter algorithm calls back into bsnes specific c++ colortable code, that
@@ -66,8 +64,18 @@ sed -i 's@/usr/lib@%{_libdir}@' bsnes/ui/general/main-window.cpp
 
 
 %build
+#prepare for building compatibity and accuracy profile, as well as the debugger
+cp -pR bsnes bsnes-accuracy
+cp -pR bsnes laevateinn
+
 pushd bsnes
-make %{?_smp_mflags} compiler=gcc phoenix=gtk
+make %{?_smp_mflags} compiler=gcc profile=compatibility phoenix=gtk
+popd
+pushd bsnes-accuracy
+make %{?_smp_mflags} compiler=gcc profile=accuracy phoenix=gtk
+popd
+pushd laevateinn
+make %{?_smp_mflags} compiler=gcc ui=ui-debugger phoenix=gtk
 popd
 pushd snesfilter
 make %{?_smp_mflags} compiler=gcc
@@ -80,10 +88,21 @@ popd
 %install
 rm -rf $RPM_BUILD_ROOT
 pushd bsnes
+sed -i 's/Name=bsnes/Name=bsnes (Compatibility profile)/' data/bsnes.desktop
 make install DESTDIR=$RPM_BUILD_ROOT prefix=%{_prefix}
 desktop-file-install --vendor=rpmfusion \
         --delete-original --dir $RPM_BUILD_ROOT%{_datadir}/applications \
         $RPM_BUILD_ROOT%{_datadir}/applications/bsnes.desktop
+popd
+pushd bsnes-accuracy
+sed -i 's/Name=bsnes/Name=bsnes (Accuracy profile)/' data/bsnes.desktop
+sed -i 's/Exec=bsnes/Exec=bsnes-accuracy/' data/bsnes.desktop
+install -pm 755 out/bsnes $RPM_BUILD_ROOT%{_bindir}/bsnes-accuracy
+desktop-file-install --dir $RPM_BUILD_ROOT%{_datadir}/applications \
+         data/bsnes.desktop
+popd
+pushd laevateinn
+install -pm 755 out/laevateinn $RPM_BUILD_ROOT%{_bindir}
 popd
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}
 install -pm 644 bsnes/data/cheats.xml $RPM_BUILD_ROOT%{_datadir}/%{name}
@@ -93,22 +112,27 @@ install -pm 755 snespurify/snespurify-gtk $RPM_BUILD_ROOT%{_bindir}
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/shaders
 install -pm 644 snesshader/*.shader $RPM_BUILD_ROOT%{_datadir}/%{name}/shaders
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 
 %files
-%defattr(-,root,root,-)
 %doc README.Fedora
 %{_bindir}/bsnes
+%{_bindir}/bsnes-accuracy
+%{_bindir}/laevateinn
 %{_bindir}/snespurify-gtk
 %{_libdir}/bsnes
 %{_datadir}/bsnes
 %{_datadir}/pixmaps/bsnes.png
+%{_datadir}/applications/bsnes.desktop
 %{_datadir}/applications/rpmfusion-bsnes.desktop
 
 
 %changelog
+* Tue Feb 14 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.086-1
+- Updated to 0.086
+- Dropped obsolete Group, Buildroot, %%clean and %%defattr
+- Updated the systemlibs patch
+- Build Compatibility and Accuracy profiles, as well as the laevateinn debugger
+
 * Tue Jan 03 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.085-1
 - Updated to 0.085
 - Updated the systemwide patch
