@@ -9,6 +9,7 @@ License:        GPLv3
 URL:            http://byuu.org/bsnes/
 Source0:        http://bsnes.googlecode.com/files/%{name}_v%{vernumber}-source.tar.bz2
 Source2:        README.bsnes
+Patch0:         bsnes-0.086-gcc47.patch
 Patch1:         bsnes-0.086-systemwide.patch
 
 #bsnes does not use system snes_ntsc because the modified video processing
@@ -38,6 +39,7 @@ minimum system requirements for bsnes are quite high.
 
 %prep
 %setup -qn %{name}_v%{vernumber}-source
+%patch0 -p1 -b .gcc47
 %patch1 -p1 -b .systemwide
 
 #fix permissions
@@ -132,6 +134,7 @@ install -pm 644 snesshader/*.shader $RPM_BUILD_ROOT%{_datadir}/%{name}/shaders
 - Dropped obsolete Group, Buildroot, %%clean and %%defattr
 - Updated the systemlibs patch
 - Build Compatibility and Accuracy profiles, as well as the laevateinn debugger
+- Fixed gcc-4.7 build failure
 
 * Tue Jan 03 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.085-1
 - Updated to 0.085
