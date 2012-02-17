@@ -2,7 +2,7 @@
 
 Name:           bsnes
 Version:        0.%{vernumber}
-Release:        1%{?dist}
+Release:        1%{?dist}.1
 Summary:        SNES emulator focused on accuracy
 
 License:        GPLv3
