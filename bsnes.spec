@@ -2,7 +2,7 @@
 
 Name:           bsnes
 Version:        0.%{vernumber}
-Release:        1%{?dist}.1
+Release:        2%{?dist}.1
 Summary:        SNES emulator focused on accuracy
 
 License:        GPLv3
@@ -129,6 +129,9 @@ install -pm 644 snesshader/*.shader $RPM_BUILD_ROOT%{_datadir}/%{name}/shaders
 
 
 %changelog
+* Fri Mar 02 2012 Nicolas Chauvet <kwizart@gmail.com> - 0.086-2.1
+- Rebuilt for c++ ABI breakage
+
 * Tue Feb 14 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.086-1
 - Updated to 0.086
 - Dropped obsolete Group, Buildroot, %%clean and %%defattr
