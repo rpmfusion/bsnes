@@ -1,16 +1,17 @@
-%global vernumber 086
+%global vernumber 091
 
 Name:           bsnes
 Version:        0.%{vernumber}
-Release:        2%{?dist}.1
+Release:        1%{?dist}
 Summary:        SNES emulator focused on accuracy
 
 License:        GPLv3
-URL:            http://byuu.org/bsnes/
-Source0:        http://bsnes.googlecode.com/files/%{name}_v%{vernumber}-source.tar.bz2
-Source2:        README.bsnes
-Patch0:         bsnes-0.086-gcc47.patch
-Patch1:         bsnes-0.086-systemwide.patch
+URL:            http://byuu.org/%{name}/
+#bsnes needs copyrighted firmware to work. use the bsnes-source-cleanup script to clean the tarball
+Source0:        http://%{name}.googlecode.com/files/%{name}_v%{vernumber}-source-noroms.tar.xz
+Source1:        startscript
+Source2:        bsnes-source-cleanup
+Source3:        README.bsnes
 
 #bsnes does not use system snes_ntsc because the modified video processing
 #filter algorithm calls back into bsnes specific c++ colortable code, that
@@ -29,106 +30,92 @@ Obsoletes:      %{name}-snesreader < 0.079
 Obsoletes:      %{name}-supergameboy < 0.079
 
 %description
-bsnes is an emulator that began development on 2004-10-14. The purpose of the
-emulator is a bit different from other emulators: it focuses on accuracy,
-debugging functionality, and clean code.
-The emulator does not focus on things that would hinder accuracy. This
-includes speed and game-specific hacks for compatibility. As a result, the
-minimum system requirements for bsnes are quite high.
+bsnes is a multi-system emulator that began development on 2004-10-14. It
+currently supports the following systems:
+* Nintendo
+* Super Nintendo
+* Game Boy
+* Game Boy Color
+* Game Boy Advance
+* Nintendo DS
+
+bsnes also supports the following subsystems:
+* Super Game Boy
+* BS-X Satellaview
+* Sufami Turbo
+
+bsnes focuses on accuracy and clean code above all else. It never uses speed or
+compatibilty hacks. As a result, the minimum system requirements are greater
+than with other emulators.
 
 
 %prep
 %setup -qn %{name}_v%{vernumber}-source
-%patch0 -p1 -b .gcc47
-%patch1 -p1 -b .systemwide
 
 #fix permissions
 find . -type f -not -name \*.sh -exec chmod 644 {} \;
 
 #use system optflags
-sed -i "s/-O3/$RPM_OPT_FLAGS/" bsnes/Makefile
-sed -i "s/-O3/$RPM_OPT_FLAGS -fPIC/" snesfilter/Makefile
-sed -i "s/-O3/$RPM_OPT_FLAGS/" snespurify/cc-gtk.sh
+sed -i "s/-O3/$RPM_OPT_FLAGS/" %{name}/Makefile
+sed -i "s/-O3/$RPM_OPT_FLAGS/" purify/Makefile
 
 #don't strip the binaries prematurely
-sed -i "s/link += -s/link +=/" bsnes/Makefile
-sed -i "s/link    := -s/link    :=/" snesfilter/Makefile
-sed -i "s/-s //" snespurify/cc-gtk.sh
-
-#use the proper compiler and moc commands
-sed -i "s/g++-4.5/g++/" snespurify/cc-gtk.sh
+sed -i "s/link += -s/link +=/" %{name}/Makefile
+sed -i "s/link := -s/link := -lX11/" purify/Makefile
 
 #install fedora-specific readme
 install -pm 644 %{SOURCE2} README.Fedora
 
-#use proper system-wide path for filters
-sed -i 's@/usr/lib@%{_libdir}@' bsnes/ui/general/main-window.cpp
-
 
 %build
-#prepare for building compatibity and accuracy profile, as well as the debugger
-cp -pR bsnes bsnes-accuracy
-cp -pR bsnes laevateinn
-
-pushd bsnes
+pushd %{name}
 make %{?_smp_mflags} compiler=gcc profile=compatibility phoenix=gtk
 popd
-pushd bsnes-accuracy
-make %{?_smp_mflags} compiler=gcc profile=accuracy phoenix=gtk
-popd
-pushd laevateinn
-make %{?_smp_mflags} compiler=gcc ui=ui-debugger phoenix=gtk
-popd
-pushd snesfilter
+pushd purify
 make %{?_smp_mflags} compiler=gcc
-popd
-pushd snespurify
-./cc-gtk.sh
 popd
 
 
 %install
 rm -rf $RPM_BUILD_ROOT
-pushd bsnes
-sed -i 's/Name=bsnes/Name=bsnes (Compatibility profile)/' data/bsnes.desktop
-make install DESTDIR=$RPM_BUILD_ROOT prefix=%{_prefix}
-desktop-file-install --vendor=rpmfusion \
-        --delete-original --dir $RPM_BUILD_ROOT%{_datadir}/applications \
-        $RPM_BUILD_ROOT%{_datadir}/applications/bsnes.desktop
-popd
-pushd bsnes-accuracy
-sed -i 's/Name=bsnes/Name=bsnes (Accuracy profile)/' data/bsnes.desktop
-sed -i 's/Exec=bsnes/Exec=bsnes-accuracy/' data/bsnes.desktop
-install -pm 755 out/bsnes $RPM_BUILD_ROOT%{_bindir}/bsnes-accuracy
-desktop-file-install --dir $RPM_BUILD_ROOT%{_datadir}/applications \
-         data/bsnes.desktop
-popd
-pushd laevateinn
-install -pm 755 out/laevateinn $RPM_BUILD_ROOT%{_bindir}
-popd
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}
-install -pm 644 bsnes/data/cheats.xml $RPM_BUILD_ROOT%{_datadir}/%{name}
-install -d $RPM_BUILD_ROOT%{_libdir}/%{name}/filters
-install -pm 755 snesfilter/out/*.filter $RPM_BUILD_ROOT%{_libdir}/%{name}/filters
-install -pm 755 snespurify/snespurify-gtk $RPM_BUILD_ROOT%{_bindir}
+install -Dpm 755 %{name}/out/%{name} $RPM_BUILD_ROOT%{_libexecdir}/%{name}
+install -Dpm 755 %{SOURCE1} $RPM_BUILD_ROOT%{_bindir}/%{name}
+install -d $RPM_BUILD_ROOT%{_datadir}/applications
+desktop-file-install --vendor=rpmfusion --dir $RPM_BUILD_ROOT%{_datadir}/applications \
+    %{name}/data/%{name}.desktop
+install -Dpm 644 %{name}/data/%{name}.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/%{name}.png
+install -Dpm 644 %{name}/data/cheats.xml $RPM_BUILD_ROOT%{_datadir}/%{name}/cheats.xml
+install -Dpm 755 purify/purify $RPM_BUILD_ROOT%{_bindir}
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/shaders
-install -pm 644 snesshader/*.shader $RPM_BUILD_ROOT%{_datadir}/%{name}/shaders
+install -pm 644 shaders/*.shader $RPM_BUILD_ROOT%{_datadir}/%{name}/shaders
+
+#install firmwares
+pushd %{name}/profile
+find -type f | while read sfile
+do
+    install -Dpm 644 "$sfile" "$RPM_BUILD_ROOT%{_datadir}/%{name}/$sfile"
+done
+popd
 
 
 %files
 %doc README.Fedora
-%{_bindir}/bsnes
-%{_bindir}/bsnes-accuracy
-%{_bindir}/laevateinn
-%{_bindir}/snespurify-gtk
-%{_libdir}/bsnes
-%{_datadir}/bsnes
-%{_datadir}/pixmaps/bsnes.png
-%{_datadir}/applications/bsnes.desktop
-%{_datadir}/applications/rpmfusion-bsnes.desktop
+%{_bindir}/%{name}
+%{_bindir}/purify
+%{_libexecdir}/%{name}
+%{_datadir}/%{name}
+%{_datadir}/pixmaps/%{name}.png
+%{_datadir}/applications/rpmfusion-%{name}.desktop
 
 
 %changelog
+* Sat Aug 25 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.091-1
+- Updated to 0.091
+- Switched to Debian approach for system-wide installation
+- Updated %%description
+- Dropped README.Fedora
+- Overhauled the package dropping the debugger and accuracy profile
+
 * Fri Mar 02 2012 Nicolas Chauvet <kwizart@gmail.com> - 0.086-2.1
 - Rebuilt for c++ ABI breakage
 
