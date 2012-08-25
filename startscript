@@ -1,0 +1,41 @@
+#!/bin/bash
+
+if test ! -d $HOME/.config/bsnes
+  then
+    mkdir -p $HOME/.config/bsnes
+fi
+
+if test ! -f $HOME/.config/bsnes/cheats.xml
+  then
+    cp /usr/share/bsnes/cheats.xml $HOME/.config/bsnes
+fi
+
+if test ! -d $HOME/.config/bsnes/shaders
+  then
+    mkdir -p $HOME/.config/bsnes/shaders
+fi
+
+for shader in $(ls /usr/share/bsnes/shaders/*.OpenGL.shader)
+  do
+    if test ! -f $HOME/.config/bsnes/shaders/${shader##*/}
+      then
+        ln -s $shader $HOME/.config/bsnes/shaders
+    fi
+done
+
+find /usr/share/bsnes -type d -regex ".*\.s[fy][cs]" | while read sdir
+  do
+    if test ! -d "$HOME/.config/bsnes/${sdir##*/}"
+      then
+        mkdir "$HOME/.config/bsnes/${sdir##*/}"
+    fi
+    for sfile in $(ls "$sdir")
+      do
+        if test ! -f "$HOME/.config/bsnes/${sdir##*/}/${sfile##*/}"
+          then
+            ln -s "$sdir/$sfile" "$HOME/.config/bsnes/${sdir##*/}"
+        fi
+    done
+done
+
+/usr/libexec/bsnes "$@"
