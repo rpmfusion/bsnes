@@ -1,12 +1,8 @@
 RPM Fusion bsnes package
 ==============================================================================
 
-RPM Fusion bsnes package is patched to install cheat.xml, filters and shaders
-in system-wide location. If you run into issues using these, please don't
-complain to upstream, but use RPM Fusion bugzilla first.
-
-Moreover, due to [1] newer versions of bsnes are more strict when it comes to
-file formats accepted. The snespurify-qt utility can be used to convert the
-images. They have to be uncompressed.
-
-[1] http://byuu.org/bsnes/legacy-formats
+bsnes requires firmware/BIOS images to function properly. They need to
+be placed in ~/.config/bsnes, in the existing subfolders. The manifest.xml
+files contain the info on the correct website.
+Some of these files can be downloaded from bsnes website (they are included in
+the bsnes archive), some need to be obtained by other means.
