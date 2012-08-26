@@ -63,6 +63,9 @@ sed -i "s/-O3/$RPM_OPT_FLAGS/" purify/Makefile
 sed -i "s/link += -s/link +=/" %{name}/Makefile
 sed -i "s/link := -s/link := -lX11/" purify/Makefile
 
+#don't use -march=native, it does not work with RPM Fusion buildsystem
+sed -i "s/flags += -march=native/flags +=/" %{name}/Makefile
+
 #install fedora-specific readme
 install -pm 644 %{SOURCE2} README.Fedora
 
@@ -113,8 +116,9 @@ popd
 - Updated to 0.091
 - Switched to Debian approach for system-wide installation
 - Updated %%description
-- Dropped README.Fedora
+- Updated README.Fedora
 - Overhauled the package dropping the debugger and accuracy profile
+- Removed -march=native from the Makefile
 
 * Fri Mar 02 2012 Nicolas Chauvet <kwizart@gmail.com> - 0.086-2.1
 - Rebuilt for c++ ABI breakage
