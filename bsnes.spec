@@ -2,7 +2,7 @@
 
 Name:           bsnes
 Version:        0.%{vernumber}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        SNES emulator focused on accuracy
 
 License:        GPLv3
@@ -12,6 +12,9 @@ Source0:        http://%{name}.googlecode.com/files/%{name}_v%{vernumber}-source
 Source1:        startscript
 Source2:        bsnes-source-cleanup
 Source3:        README.bsnes
+
+#./nall/endian.hpp:39:4: error: #error "Unknown endian. Please specify in nall/intrinsics.hpp"
+ExclusiveArch:  i686 x86_64
 
 #bsnes does not use system snes_ntsc because the modified video processing
 #filter algorithm calls back into bsnes specific c++ colortable code, that
@@ -112,6 +115,9 @@ popd
 
 
 %changelog
+* Sun Jul 21 2013 Nicolas Chauvet <kwizart@gmail.com> - 0.091-2
+- Add ExclusiveArch - rfbz#2406
+
 * Sat Aug 25 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.091-1
 - Updated to 0.091
 - Switched to Debian approach for system-wide installation
