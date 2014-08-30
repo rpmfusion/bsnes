@@ -2,7 +2,7 @@
 
 Name:           bsnes
 Version:        0.%{vernumber}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        SNES emulator focused on accuracy
 
 License:        GPLv3
@@ -115,6 +115,9 @@ popd
 
 
 %changelog
+* Sat Aug 30 2014 Sérgio Basto <sergio@serjux.com> - 0.091-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
 * Sun Jul 21 2013 Nicolas Chauvet <kwizart@gmail.com> - 0.091-2
 - Add ExclusiveArch - rfbz#2406
 
