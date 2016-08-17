@@ -1,8 +1,0 @@
-RPM Fusion bsnes package
-==============================================================================
-
-bsnes requires firmware/BIOS images to function properly. They need to
-be placed in ~/.config/bsnes, in the existing subfolders. The manifest.xml
-files contain the info on the correct website.
-Some of these files can be downloaded from bsnes website (they are included in
-the bsnes archive), some need to be obtained by other means.
